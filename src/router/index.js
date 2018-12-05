@@ -55,7 +55,14 @@ export const constantRouterMap = [
         path: 'history',
         name: 'history',
         component: () => import('@/views/productSelection/history'),
-        meta: { title: '历史选型', icon: 'nested' }
+        meta: { title: '历史选型', icon: 'list' }
+      },
+      {
+        path: 'selecting',
+        name: 'selecting',
+        hidden: true,
+        component: () => import('@/views/productSelection/selecting'),
+        meta: { title: '选型', icon: 'select' }
       }
     ]
   },

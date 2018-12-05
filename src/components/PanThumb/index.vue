@@ -40,8 +40,8 @@ export default {
   border-radius: 50%;
   display: inline-block;
   position: relative;
-  cursor: default;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+  cursor: pointer;
 }
 
 .pan-info-roles-container {
@@ -53,10 +53,10 @@ export default {
   width: 100%;
   height: 100%;
   background-size: 100%;
-  border-radius: 50%;
+  /*border-radius: 50%;*/
   overflow: hidden;
   position: absolute;
-  transform-origin: 95% 40%;
+  /*transform-origin: 95% 40%;*/
   transition: all 0.3s ease-in-out;
 }
 
@@ -129,9 +129,6 @@ export default {
   background: rgba(255, 255, 255, 0.5);
 }
 
-.pan-item:hover .pan-thumb {
-  transform: rotate(-110deg);
-}
 
 .pan-item:hover .pan-info p a {
   opacity: 1;

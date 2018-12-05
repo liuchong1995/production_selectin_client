@@ -1,15 +1,14 @@
 <template>
   <div class="mixin-components-container">
-    <el-row :gutter="20" style="margin-top:50px;">
-      <el-col :span="4">
+    <el-row :gutter="20" style="margin-top:0px;">
+      <el-col :span="4" v-for="product in productList" :key="product.productId">
         <el-card class="box-card">
-          <div slot="header" class="clearfix">
-            <span>图片hover效果</span>
+          <div slot="header" class="clearfix" style="text-align: center">
+            <span>{{product.productName}}</span>
           </div>
           <div class="component-item">
-            <pan-thumb width="100px" height="100px"
-                       image="https://wpimg.wallstcn.com/577965b9-bb9e-4e02-9f0c-095b41417191">
-              vue-element-admin
+            <pan-thumb width="300px" height="300px"
+                       :image="product.productImg">
             </pan-thumb>
           </div>
         </el-card>
@@ -19,6 +18,7 @@
 </template>
 
 <script>
+  import { mapGetters } from 'vuex'
   import PanThumb from '@/components/PanThumb'
   import { fetchList } from '@/api/product'
 
@@ -32,9 +32,15 @@
         productList: []
       }
     },
+    computed: {
+      ...mapGetters([
+        'pictureUrl'
+      ])
+    },
     mounted() {
       fetchList().then(response => {
-        this.productList = response.data.data
+        this.productList = response.data
+        this.productList.forEach(ele => ele.productImg = this.pictureUrl + ele.productImg)
       })
     }
   }
