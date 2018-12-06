@@ -14,3 +14,18 @@ export function getOptionalListBySelected(data) {
     data
   })
 }
+
+export function getComponent(compId) {
+  return request({
+    url: `/component/${compId}`,
+    method: 'get'
+  })
+}
+
+export function hasAttachment(data) {
+  return request({
+    url: `/component/hasAttachment`,
+    method: 'post',
+    data
+  })
+}

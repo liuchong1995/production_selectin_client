@@ -10,3 +10,18 @@ export function getMenuTree(prdId,parentId) {
     }
   })
 }
+
+export function getCategory(cateId) {
+  return request({
+    url: `/category/${cateId}`,
+    method: 'get'
+  })
+}
+
+export function refactorCategoryMenu(data) {
+  return request({
+    url: `/category/refactor`,
+    method: 'post',
+    data
+  })
+}
