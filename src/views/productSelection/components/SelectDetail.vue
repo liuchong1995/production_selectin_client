@@ -1,11 +1,11 @@
 <template>
   <el-row>
     <el-dialog
-      title="部件详情"
+      :title="currentComponentDetail.componentModelNumber"
       :visible.sync="centerDialogVisible"
       width="80%"
       center>
-      <span v-html="currentComponentDetail"></span>
+      <span v-html="currentComponentDetail.componentDetail"></span>
       <span slot="footer" class="dialog-footer">
     <el-button type="primary" @click="centerDialogVisible = false">确 定</el-button>
   </span>
@@ -15,6 +15,8 @@
         :data="treeData"
         :props="defaultProps"
         :highlight-current="true"
+        node-key="categoryId"
+        :default-expanded-keys="defaultExpandedKeys"
         accordion
         @node-click="handleNodeClick"
         style="width: 200px;margin-top: 10px">
@@ -68,7 +70,7 @@
                   <el-tooltip class="item" effect="light" :content="comp.componentReamrk" placement="top-start"
                               :open-delay="300">
                     <pan-thumb width="170px" height="180px"
-                               :image="comp.componentImage">
+                               :image="comp.componentImage" @click.native="showDetailDialog(comp)">
                     </pan-thumb>
                   </el-tooltip>
                 </div>
@@ -90,7 +92,7 @@
                   <el-tooltip class="item" effect="light" :content="comp.componentReamrk" placement="top-start"
                               :open-delay="300">
                     <pan-thumb width="170px" height="180px"
-                               :image="comp.componentImage" @click.native="showDetailDialog(comp.componentDetail)">
+                               :image="comp.componentImage" @click.native="showDetailDialog(comp)">
                     </pan-thumb>
                   </el-tooltip>
                 </div>
@@ -134,7 +136,7 @@
   import { getCategory, getMenuTree, refactorCategoryMenu } from '@/api/category'
   import { getAllHeight, getAllInstallation, getAllMountHeight, getShelfConstraint } from '@/api/shelf'
   import { getOptionalListByCateId, getOptionalListBySelected, getComponent, hasAttachment } from '@/api/component'
-  import { generateModelNumber,getMandatoryResult,saveOrder } from '@/api/order'
+  import { generateModelNumber, getMandatoryResult, saveOrder } from '@/api/order'
   import PanThumb from '@/components/PanThumb/index'
 
   export default {
@@ -144,6 +146,8 @@
       return {
         centerDialogVisible: false,
         dialogFormVisible: false,
+        defaultExpandedKeys: [],
+
         productId: 0,
         treeData: [],
         defaultProps: {
@@ -245,9 +249,15 @@
           this.optionalListBySelectedRequest.selectedList = this.selectedList
           this.optionalList = await getOptionalListBySelected(this.optionalListBySelectedRequest)
         }
+        if(this.defaultExpandedKeys.find(ele => ele === data.categoryId)){
+          this.defaultExpandedKeys.splice(this.defaultExpandedKeys.findIndex(ele => ele === data.categoryId),1)
+        } else {
+          this.defaultExpandedKeys = []
+          this.defaultExpandedKeys.push(data.categoryId)
+        }
       },
-      showDetailDialog(detail) {
-        this.currentComponentDetail = detail
+      showDetailDialog(comp) {
+        this.currentComponentDetail = comp
         this.centerDialogVisible = true
       },
       async choiceComponent(comp) {
@@ -327,27 +337,28 @@
         this.orderEntity.productModel = await generateModelNumber(generateOrderModelNumberRequest)
       },
       async saveOrder() {
-        this.orderEntity.productId = this.productId;
+        this.orderEntity.productId = this.productId
         if (this.selectedList.length === 0) {
-          this.$message('请至少选择一个部件!');
-          return;
+          this.$message('请至少选择一个部件!')
+          return
         }
         this.orderEntity.componentIds = JSON.stringify(this.selectedList)
         const mandatoryResult = await getMandatoryResult(this.orderEntity)
         if (mandatoryResult.categories.length > 0 || mandatoryResult.components.length > 0) {
-          let mandatoryMessage = '';
+          let mandatoryMessage = ''
           if (mandatoryResult.categories.length > 0) {
-            mandatoryMessage = mandatoryMessage.concat('必选类型:');
-            mandatoryResult.categories.forEach(ele => mandatoryMessage = mandatoryMessage.concat(ele.categoryName.concat(' ')));
+            mandatoryMessage = mandatoryMessage.concat('必选类型:')
+            mandatoryResult.categories.forEach(ele => mandatoryMessage = mandatoryMessage.concat(ele.categoryName.concat(' ')))
           }
           if (mandatoryResult.components.length > 0) {
-            mandatoryMessage = mandatoryMessage.concat('必选部件:');
-            mandatoryResult.components.forEach(ele => mandatoryMessage = mandatoryMessage.concat(ele.componentName.concat(' ')).concat(ele.componentModelNumber.concat(' ')));
+            mandatoryMessage = mandatoryMessage.concat('必选部件:')
+            mandatoryResult.components.forEach(ele => mandatoryMessage = mandatoryMessage.concat(ele.componentName.concat(' ')).concat(ele.componentModelNumber.concat(' ')))
           }
-          this.$message('当前选型下以下选项为必选项，' + mandatoryMessage);
+          this.$message('当前选型下以下选项为必选项，' + mandatoryMessage)
         } else {
+          this.orderEntity.mountHeight = this.allMountHeight.find(ele => ele.mountingHeightId === this.orderEntity.mountHeight).height
           await saveOrder(this.orderEntity)
-          this.$message('保存成功!');
+          this.$message('保存成功!')
         }
       }
     },
