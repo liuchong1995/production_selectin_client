@@ -7,7 +7,7 @@
                         <span>{{product.productName}}</span>
                     </div>
                     <div class="component-item" @click.prevent="toSelect(product.productId)">
-                        <pan-thumb width="300px" height="300px"
+                        <pan-thumb width="220px" height="235px"
                                    :image="product.productImg">
                         </pan-thumb>
                     </div>
@@ -33,7 +33,7 @@
     },
     mounted() {
       fetchList().then(response => {
-        this.productList = response.data
+        this.productList = response
       })
     },
     methods: {

@@ -4,7 +4,9 @@
     <breadcrumb />
     <el-dropdown class="avatar-container" trigger="click">
       <div class="avatar-wrapper">
-        <img :src="avatar+'?imageView2/1/w/80/h/80'" class="user-avatar">
+        <svg-icon v-if="roles.find(ele => ele === 'admin')" icon-class="admin" style="font-size: 25px"></svg-icon>
+        <svg-icon v-else-if="roles.find(ele => ele === 'manager')" icon-class="manager" style="font-size: 25px"></svg-icon>
+        <svg-icon v-else="roles.find(ele => ele === 'user')" icon-class="user" style="font-size: 25px"></svg-icon>
         <i class="el-icon-caret-bottom"/>
       </div>
       <el-dropdown-menu slot="dropdown" class="user-dropdown">
@@ -34,7 +36,7 @@ export default {
   computed: {
     ...mapGetters([
       'sidebar',
-      'avatar'
+      'roles'
     ])
   },
   methods: {

@@ -55,8 +55,11 @@ service.interceptors.response.use(
         })
       }
       return Promise.reject('error')
+    } else if (res.token || !res.data || res.data.roles) {
+      //如果登录请求则直接返回
+      return res
     } else {
-      return response.data
+      return res.data
     }
   },
   error => {
