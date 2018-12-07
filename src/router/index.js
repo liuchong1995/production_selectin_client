@@ -37,12 +37,21 @@ export const constantRouterMap = [
       component: () => import('@/views/dashboard/index'),
     }]
   },
+]
 
+export default new Router({
+  // mode: 'history', //后端支持可开
+  scrollBehavior: () => ({ y: 0 }),
+  routes: constantRouterMap
+})
+
+export const asyncRouterMap = [
   {
     path: '/selection',
     component: Layout,
     redirect: '/selection/list',
     name: 'selection',
+    alwaysShow: true,
     meta: { title: '产品选型', icon: 'example' },
     children: [
       {
@@ -55,7 +64,7 @@ export const constantRouterMap = [
         path: 'history',
         name: 'history',
         component: () => import('@/views/productSelection/history'),
-        meta: { title: '历史选型', icon: 'list'}
+        meta: { title: '历史选型', roles:['admin'], icon: 'list'}
       },
       {
         path: 'selecting/:productId(\\d+)',
@@ -76,9 +85,3 @@ export const constantRouterMap = [
 
   { path: '*', redirect: '/404', hidden: true }
 ]
-
-export default new Router({
-  // mode: 'history', //后端支持可开
-  scrollBehavior: () => ({ y: 0 }),
-  routes: constantRouterMap
-})
