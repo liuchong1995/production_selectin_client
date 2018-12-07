@@ -23,3 +23,33 @@ export function saveOrder(data) {
     data
   })
 }
+
+export function updateOrder(data) {
+  return request({
+    url: `/order/update`,
+    method: 'post',
+    data
+  })
+}
+
+export function getList(data) {
+  return request({
+    url: '/order/list',
+    method: 'post',
+    data
+  })
+}
+
+export function deleteOrder(orderId) {
+  return request({
+    url: `/order/${orderId}`,
+    method: 'delete',
+  })
+}
+
+export function getOrderDetail(orderId) {
+  return request({
+    url: `/order/orderDetail/${orderId}`,
+    method: 'get',
+  })
+}

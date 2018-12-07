@@ -38,13 +38,13 @@
                           placeholder="产品型号"></el-input>
               </el-form-item>
               <el-form-item label="关联单号">
-                <el-input style="width: 200px" size="small" placeholder="关联单号"></el-input>
+                <el-input v-model="orderEntity.relateSellId" style="width: 200px" size="small" placeholder="关联单号"></el-input>
               </el-form-item>
               <el-form-item label="客户名称">
-                <el-input style="width: 200px" size="small" placeholder="客户名称"></el-input>
+                <el-input v-model="orderEntity.customer" style="width: 200px" size="small" placeholder="客户名称"></el-input>
               </el-form-item>
               <el-form-item label="最终用户">
-                <el-input style="width: 200px" size="small" placeholder="最终用户"></el-input>
+                <el-input v-model="orderEntity.endUser" style="width: 200px" size="small" placeholder="最终用户"></el-input>
               </el-form-item>
               <el-form-item>
                 <el-button type="success" size="small" @click="saveOrder">保存</el-button>
@@ -136,7 +136,7 @@
   import { getCategory, getMenuTree, refactorCategoryMenu } from '@/api/category'
   import { getAllHeight, getAllInstallation, getAllMountHeight, getShelfConstraint } from '@/api/shelf'
   import { getOptionalListByCateId, getOptionalListBySelected, getComponent, hasAttachment } from '@/api/component'
-  import { generateModelNumber, getMandatoryResult, saveOrder } from '@/api/order'
+  import { generateModelNumber, getMandatoryResult, saveOrder, getOrderDetail, updateOrder} from '@/api/order'
   import PanThumb from '@/components/PanThumb/index'
 
   export default {
@@ -171,7 +171,7 @@
         orderEntity: {
           productModel: '',
           shelfHeight: null,
-          mountHeight: null
+          mountHeight: null,
         },
         //所有架子及对应的高度
         allShelfHeight: {},
@@ -192,18 +192,40 @@
         formLabelWidth: '200px'
       }
     },
+    computed: {
+      currentUserName () {
+        return this.$store.getters.name
+      }
+    },
     props: {
       isEdit: {
         type: Boolean,
         default: false
       }
     },
-    mounted() {
-      this.productId = this.$route.params && this.$route.params.productId
-      this.refactorTreeRequest.productId = this.productId
-      this.loadTreeData(this.productId)
+    async mounted() {
+      if (!this.isEdit){
+        this.productId = this.$route.params && this.$route.params.productId
+        this.refactorTreeRequest.productId = this.productId
+        this.orderEntity.creator = this.currentUserName
+        this.loadTreeData(this.productId)
+      } else {
+        await this.loadEditDate()
+      }
     },
     methods: {
+      async loadEditDate(){
+        const orderId = this.$route.params && this.$route.params.orderId
+        const orderDetail = await getOrderDetail(orderId)
+        this.orderEntity = orderDetail.order
+        this.productId = this.orderEntity.productId
+        await this.loadTreeData(this.productId)
+        this.refactorTreeRequest.productId = this.productId
+        this.refactorTreeRequest.selectedList = orderDetail.components.sort((a,b) => a.componentId - b.componentId)
+        this.selectedList = this.refactorTreeRequest.selectedList
+        this.selectedTypeList = this.selectedList.map(ele => ele.firstCategoryId)
+
+      },
       async loadTreeData(prdId) {
         const parentId = 0;
         [this.treeData, this.allShelfHeight, this.allMountHeight, this.allShelfConstraint, this.allInstallation] =
@@ -356,9 +378,20 @@
           }
           this.$message('当前选型下以下选项为必选项，' + mandatoryMessage)
         } else {
-          this.orderEntity.mountHeight = this.allMountHeight.find(ele => ele.mountingHeightId === this.orderEntity.mountHeight).height
-          await saveOrder(this.orderEntity)
-          this.$message('保存成功!')
+          if (this.orderEntity.mountHeight) {
+            const tempMountHeight = this.orderEntity.mountHeight
+            this.orderEntity.mountHeight = this.allMountHeight.find(ele => ele.mountingHeightId === this.orderEntity.mountHeight).height
+            await saveOrder(this.orderEntity)
+            this.orderEntity.mountHeight = tempMountHeight
+          } else {
+            if (!this.isEdit){
+              await saveOrder(this.orderEntity)
+            } else {
+              await updateOrder(this.orderEntity)
+            }
+          }
+          const messsage = !this.isEdit ? '保存成功!' : '修改成功!'
+          this.$message(messsage)
         }
       },
       getShelfConstraintInstallId() {
