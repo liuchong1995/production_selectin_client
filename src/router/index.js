@@ -37,6 +37,11 @@ export const constantRouterMap = [
   { path: '/login', component: () => import('@/views/login/index'), hidden: true },
   { path: '/404', component: () => import('@/views/404'), hidden: true },
   {
+    path: '/selection/print/:orderId(\\d+)',
+    component: () => import('@/views/productSelection/orderDetailPrint'),
+    hidden: true
+  },
+  {
     path: '',
     component: Layout,
     redirect: '/dashboard',
@@ -90,6 +95,13 @@ export const asyncRouterMap = [
         hidden: true,
         component: () => import('@/views/productSelection/edit'),
         meta: { title: '修改选型', noCache: true}
+      },
+      {
+        path: 'detail/:orderId(\\d+)',
+        name: 'orderDetail',
+        hidden: true,
+        component: () => import('@/views/productSelection/orderDetail'),
+        meta: { title: '选型详情'}
       }
     ]
   },

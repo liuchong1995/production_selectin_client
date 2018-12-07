@@ -63,9 +63,11 @@
       <el-table-column label="操作" align="center" width="220" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button type="primary" size="mini" @click="handleDetail(scope.row.orderId)">详情</el-button>
-          <el-button v-if="currentUserName === scope.row.creator" size="mini" type="success" @click="handleModify(scope.row.orderId)">修改
+          <el-button v-if="canModifyOrDelete(scope.row.creator)" size="mini" type="success"
+                     @click="handleModify(scope.row.orderId)">修改
           </el-button>
-          <el-button v-if="currentUserName === scope.row.creator" size="mini" type="danger" @click="handleDelete(scope.row.orderId)">删除
+          <el-button v-if="canModifyOrDelete(scope.row.creator)" size="mini" type="danger"
+                     @click="handleDelete(scope.row.orderId)">删除
           </el-button>
         </template>
       </el-table-column>
@@ -79,7 +81,7 @@
 
 <script>
   import { parseTime } from '@/utils'
-  import { getList, deleteOrder} from '@/api/order'
+  import { getList, deleteOrder } from '@/api/order'
   import { fetchList } from '@/api/product'
   import { getAllUsers } from '@/api/user'
   import Pagination from '@/components/Pagination'
@@ -89,7 +91,6 @@
     components: { Pagination },
     data() {
       return {
-
         orderListData: {
           total: 1
         },
@@ -110,7 +111,7 @@
       }
     },
     computed: {
-      currentUserName () {
+      currentUserName() {
         return this.$store.getters.name
       }
     },
@@ -124,6 +125,9 @@
       }
     },
     methods: {
+      canModifyOrDelete(owner) {
+        return this.currentUserName === owner || this.currentUserName == 'admin'
+      },
       async getList() {
         await setTimeout(() => {
         }, 10000)
@@ -134,22 +138,25 @@
       async loadDate() {
         [this.productList, this.userList] = await Promise.all([fetchList(), getAllUsers()])
       },
-      async handleDelete(orderId){
+      async handleDelete(orderId) {
         this.$confirm('您确定删除本条订单么, 是否继续?', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
           type: 'warning'
-        }).then( async () => {
+        }).then(async() => {
           await deleteOrder(orderId)
           this.getList()
           this.$message({
             type: 'success',
             message: '删除成功!'
-          });
+          })
         })
       },
-      handleModify(orderId){
+      handleModify(orderId) {
         this.$router.push(`/selection/edit/${orderId}`)
+      },
+      handleDetail(orderId) {
+        this.$router.push(`/selection/detail/${orderId}`)
       }
     }
   }
