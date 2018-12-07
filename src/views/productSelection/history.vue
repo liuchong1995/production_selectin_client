@@ -63,9 +63,9 @@
       <el-table-column label="操作" align="center" width="220" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button type="primary" size="mini" @click="handleDetail(scope.row.orderId)">详情</el-button>
-          <el-button size="mini" type="success" @click="handleModify(scope.row.orderId)">修改
+          <el-button v-if="currentUserName === scope.row.creator" size="mini" type="success" @click="handleModify(scope.row.orderId)">修改
           </el-button>
-          <el-button size="mini" type="danger" @click="handleDelete(scope.row.orderId)">删除
+          <el-button v-if="currentUserName === scope.row.creator" size="mini" type="danger" @click="handleDelete(scope.row.orderId)">删除
           </el-button>
         </template>
       </el-table-column>
@@ -107,6 +107,11 @@
         },
         productList: [],
         userList: []
+      }
+    },
+    computed: {
+      currentUserName () {
+        return this.$store.getters.name
       }
     },
     created() {

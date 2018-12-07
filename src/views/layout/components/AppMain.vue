@@ -3,7 +3,7 @@
     <transition name="fade-transform" mode="out-in">
       <!-- or name="fade" -->
       <!-- <router-view :key="key"></router-view> -->
-      <keep-alive>
+      <keep-alive :include="cachedViews">
         <router-view :key="key"/>
       </keep-alive>
     </transition>

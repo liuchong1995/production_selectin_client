@@ -22,19 +22,30 @@ import Layout from '../views/layout/Layout'
   }
 **/
 export const constantRouterMap = [
+  {
+    path: '/redirect',
+    component: Layout,
+    hidden: true,
+    children: [
+      {
+        path: '/redirect/:path*',
+        component: () => import('@/views/redirect/index'),
+        meta: {noCache: true },
+      }
+    ]
+  },
   { path: '/login', component: () => import('@/views/login/index'), hidden: true },
   { path: '/404', component: () => import('@/views/404'), hidden: true },
-
   {
-    path: '/',
+    path: '',
     component: Layout,
     redirect: '/dashboard',
     name: 'dashboard',
-    hidden: true,
-    meta: { title: '首页', icon: 'example' },
     children: [{
       path: 'dashboard',
       component: () => import('@/views/dashboard/index'),
+      name: 'Dashboard',
+      meta: { title: '首页', icon: 'dashboard', noCache: true }
     }]
   },
 ]
@@ -64,7 +75,7 @@ export const asyncRouterMap = [
         path: 'history',
         name: 'history',
         component: () => import('@/views/productSelection/history'),
-        meta: { title: '历史选型', roles:['admin'], icon: 'list'}
+        meta: { title: '历史选型', icon: 'list'}
       },
       {
         path: 'selecting/:productId(\\d+)',
