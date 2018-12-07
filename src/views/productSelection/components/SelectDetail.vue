@@ -249,8 +249,8 @@
           this.optionalListBySelectedRequest.selectedList = this.selectedList
           this.optionalList = await getOptionalListBySelected(this.optionalListBySelectedRequest)
         }
-        if(this.defaultExpandedKeys.find(ele => ele === data.categoryId)){
-          this.defaultExpandedKeys.splice(this.defaultExpandedKeys.findIndex(ele => ele === data.categoryId),1)
+        if (this.defaultExpandedKeys.find(ele => ele === data.categoryId)) {
+          this.defaultExpandedKeys.splice(this.defaultExpandedKeys.findIndex(ele => ele === data.categoryId), 1)
         } else {
           this.defaultExpandedKeys = []
           this.defaultExpandedKeys.push(data.categoryId)
@@ -360,6 +360,17 @@
           await saveOrder(this.orderEntity)
           this.$message('保存成功!')
         }
+      },
+      getShelfConstraintInstallId() {
+        let allSelectedId = this.selectedList.map(ele => ele.componentId)
+        let allShelfConstraintInstallId = this.allShelfConstraint.map(ele => ele.installation)
+        return allSelectedId.filter(ele => allShelfConstraintInstallId.indexOf(ele) > -1)
+      },
+      getCurrentShelfHeight(shelfId) {
+        return this.allShelfHeight[shelfId]
+      },
+      getCurrentMounted(mountedId) {
+        return this.allMountHeight.find(ele => ele.mountingHeightId === mountedId)
       }
     },
     watch: {
@@ -370,6 +381,45 @@
         } else {
           this.treeData = await getMenuTree(this.productId, 0)
           this.orderEntity.productModel = ''
+        }
+      },
+      'orderEntity.shelfHeight': function(newValue) {
+        if (newValue) {
+          let ShelfConstraintInstallId = this.getShelfConstraintInstallId()
+          if (ShelfConstraintInstallId.length > 0) {
+            let currentConstraint = this.allShelfConstraint.filter(ele => ele.installation === ShelfConstraintInstallId[0])
+            if (currentConstraint[0].relation === 2) {
+              if (!this.orderEntity.mountHeight) {
+                this.orderEntity.mountHeight = this.allMountHeight.find(ele => ele.height === newValue).mountingHeightId
+              }
+              if (this.orderEntity.mountHeight.height !== newValue) {
+                this.orderEntity.mountHeight = this.allMountHeight.find(ele => ele.height === newValue).mountingHeightId
+              }
+            } else if (currentConstraint[0].relation === 1) {
+              this.currentAllMountHeight = this.allMountHeight.filter(ele => ele.height <= newValue - currentConstraint[0].relationValue)
+            } else {
+              this.currentAllMountHeight = this.allMountHeight.filter(ele => ele.height >= newValue - currentConstraint[0].relationValue)
+            }
+          }
+          let currentMinMountedHeight = this.currentAllShelfHeight.find(ele => ele.height === newValue)
+          this.currentAllMountHeight = this.currentAllMountHeight.filter(ele => ele.height >= currentMinMountedHeight.minMountedHeight)
+        }
+      },
+
+      'orderEntity.mountHeight': function(newValue) {
+        if (newValue) {
+          let ShelfConstraintInstallId = this.getShelfConstraintInstallId()
+          if (ShelfConstraintInstallId.length > 0) {
+            let currentConstraint = this.allShelfConstraint.filter(ele => ele.installation === ShelfConstraintInstallId[0])
+            if (currentConstraint[0].relation === 2) {
+              this.orderEntity.shelfHeight = this.currentAllShelfHeight.find(ele => ele.height === this.getCurrentMounted(newValue).height)
+            } else if (currentConstraint[0].relation === 1) {
+              this.currentAllShelfHeight = this.getCurrentShelfHeight(this.currentShelfSelectingId).filter(ele => ele.height >= this.getCurrentMounted(newValue).height + currentConstraint[0].relationValue)
+            } else {
+              this.currentAllShelfHeight = this.getCurrentShelfHeight(this.currentShelfSelectingId).filter(ele => ele.height <= this.getCurrentMounted(newValue).height + currentConstraint[0].relationValue)
+            }
+          }
+          this.currentAllShelfHeight = this.currentAllShelfHeight.filter(ele => ele.minMountedHeight <= newValue)
         }
       }
     }

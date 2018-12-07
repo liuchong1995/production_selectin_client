@@ -38,7 +38,6 @@
     },
     methods: {
       toSelect(productId){
-        console.log(111)
         this.$router.push(`/selection/selecting/${productId}`)
       }
     }
