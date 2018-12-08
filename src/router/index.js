@@ -74,7 +74,7 @@ export const asyncRouterMap = [
         path: 'list',
         name: 'list',
         component: () => import('@/views/productSelection/list'),
-        meta: { title: '产品选型', icon: 'form' }
+        meta: { title: '选型列表', icon: 'form' }
       },
       {
         path: 'history',

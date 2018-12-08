@@ -51,7 +51,7 @@
                 <el-col :span="24" style="font-size: 16px;margin-top: 10px">CDK-BAYO-S01</el-col>
             </div>
             <div class="component-item">
-                <pan-thumb width="275px" height="280px"
+                <pan-thumb width="265px" height="280px"
                            :image="comp.componentImage">
                 </pan-thumb>
             </div>
