@@ -189,7 +189,9 @@
         currentAllShelfHeight: [],
         currentAllMountHeight: [],
 
-        formLabelWidth: '200px'
+        formLabelWidth: '200px',
+        //为了适配后端
+        enableWatchMountedHeight:true
       }
     },
     computed: {
@@ -379,10 +381,12 @@
           this.$message('当前选型下以下选项为必选项，' + mandatoryMessage)
         } else {
           if (this.orderEntity.mountHeight) {
+            this.enableWatchMountedHeight = false
             const tempMountHeight = this.orderEntity.mountHeight
             this.orderEntity.mountHeight = this.allMountHeight.find(ele => ele.mountingHeightId === this.orderEntity.mountHeight).height
             await saveOrder(this.orderEntity)
             this.orderEntity.mountHeight = tempMountHeight
+            this.enableWatchMountedHeight = true
           } else {
             if (!this.isEdit){
               await saveOrder(this.orderEntity)
@@ -440,7 +444,7 @@
       },
 
       'orderEntity.mountHeight': function(newValue) {
-        if (newValue) {
+        if (newValue && this.enableWatchMountedHeight) {
           let ShelfConstraintInstallId = this.getShelfConstraintInstallId()
           if (ShelfConstraintInstallId.length > 0) {
             let currentConstraint = this.allShelfConstraint.filter(ele => ele.installation === ShelfConstraintInstallId[0])
@@ -452,7 +456,7 @@
               this.currentAllShelfHeight = this.getCurrentShelfHeight(this.currentShelfSelectingId).filter(ele => ele.height <= this.getCurrentMounted(newValue).height + currentConstraint[0].relationValue)
             }
           }
-          this.currentAllShelfHeight = this.currentAllShelfHeight.filter(ele => ele.minMountedHeight <= newValue)
+          this.currentAllShelfHeight = this.currentAllShelfHeight.filter(ele => ele.minMountedHeight <= this.getCurrentMounted(newValue).height)
         }
       }
     }
