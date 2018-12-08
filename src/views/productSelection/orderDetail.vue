@@ -17,7 +17,7 @@
       </el-col>
       <el-col :span="6" style="height: 63px">
         <el-form-item label="时间:" style="font-size: 18px">
-          <span style="font-size: 18px">{{orderDetail.order.updateTime | formatTime}}</span>
+          <span style="font-size: 18px">{{orderDetail.order.updateTime | parseTime('{y}-{m}-{d} {h}:{i}:{s}')}}</span>
         </el-form-item>
       </el-col>
       <el-col :span="6" style="height: 63px">
@@ -84,7 +84,6 @@
 </template>
 
 <script>
-  import { parseTime } from '@/utils'
   import PanThumb from '@/components/PanThumb/index'
   import { getOrderDetail } from '@/api/order'
 
@@ -100,11 +99,6 @@
         },
         currentComponentDetail: {},
         orderId: 0
-      }
-    },
-    filters: {
-      formatTime: function(time) {
-        return parseTime(time)
       }
     },
     async mounted() {

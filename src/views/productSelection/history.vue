@@ -52,7 +52,7 @@
       </el-table-column>
       <el-table-column label="修改时间" width="200px" align="center">
         <template slot-scope="scope">
-          <span>{{ scope.row.updateTime | formatTime }}</span>
+          <span>{{ scope.row.updateTime | parseTime('{y}-{m}-{d} {h}:{i}:{s}') }}</span>
         </template>
       </el-table-column>
       <el-table-column label="制单人" align="center" width="150px">
@@ -80,7 +80,6 @@
 </template>
 
 <script>
-  import { parseTime } from '@/utils'
   import { getList, deleteOrder } from '@/api/order'
   import { fetchList } from '@/api/product'
   import { getAllUsers } from '@/api/user'
@@ -118,11 +117,6 @@
     created() {
       this.getList()
       this.loadDate()
-    },
-    filters: {
-      formatTime: function(time) {
-        return parseTime(time)
-      }
     },
     methods: {
       canModifyOrDelete(owner) {
