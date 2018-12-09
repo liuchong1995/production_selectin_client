@@ -57,7 +57,7 @@
       </el-table-column>
       <el-table-column label="制单人" align="center" width="150px">
         <template slot-scope="scope">
-          <span>{{ scope.row.creator }}</span>
+          <span>{{ scope.row.creator | parseUserName}}</span>
         </template>
       </el-table-column>
       <el-table-column label="操作" align="center" width="240px" class-name="small-padding fixed-width" style="padding-left: 0;padding-right: 0">
@@ -121,7 +121,7 @@
     },
     methods: {
       canModifyOrDelete(owner) {
-        return this.currentUserName === owner || this.currentUserName == 'admin'
+        return this.currentUserName === owner || this.currentUserName === 'admin'
       },
       async getList() {
         await setTimeout(() => {

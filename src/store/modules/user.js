@@ -1,12 +1,14 @@
 import { login, logout, getInfo } from '@/api/login'
 import { getToken, setToken, removeToken } from '@/utils/auth'
+import { getAllUsers } from '@/api/user'
 
 const user = {
   state: {
     token: getToken(),
     name: '',
     avatar: '',
-    roles: []
+    roles: [],
+    allUserNameMap: {}
   },
 
   mutations: {
@@ -21,6 +23,9 @@ const user = {
     },
     SET_ROLES: (state, roles) => {
       state.roles = roles
+    },
+    SET_ALLUSERNAMEMAP:(state, allUserNameMap) => {
+      state.allUserNameMap = allUserNameMap
     }
   },
 
@@ -52,6 +57,23 @@ const user = {
           }
           commit('SET_NAME', data.name)
           commit('SET_AVATAR', data.avatar)
+          resolve(response)
+        }).catch(error => {
+          reject(error)
+        })
+      })
+    },
+
+    // 获取所有用户信息
+    GetAllInfo({ commit, state }) {
+      return new Promise((resolve, reject) => {
+        getAllUsers().then(response => {
+          const data = response
+          let allUserMap = {}
+          for (const user of data) {
+            allUserMap[user.username] = user.chineseName
+          }
+          commit('SET_ALLUSERNAMEMAP', allUserMap)
           resolve(response)
         }).catch(error => {
           reject(error)

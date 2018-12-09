@@ -360,8 +360,13 @@
       async generateModelNumber() {
         let generateOrderModelNumberRequest = this.refactorTreeRequest
         generateOrderModelNumberRequest.shelfHeight = this.orderEntity.shelfHeight
-        debugger
-        generateOrderModelNumberRequest.mountHeight = this.allMountHeight.find(ele => ele.mountingHeightId === this.orderEntity.mountHeight)
+        const tempMountedHeight = this.allMountHeight.find(ele => ele.mountingHeightId === this.orderEntity.mountHeight)
+        if (tempMountedHeight) {
+          generateOrderModelNumberRequest.mountHeight = tempMountedHeight
+        } else {
+          generateOrderModelNumberRequest.mountHeight = this.allMountHeight.find(ele => ele.height === this.orderEntity.mountHeight)
+        }
+
         this.orderEntity.productModel = await generateModelNumber(generateOrderModelNumberRequest)
       },
       async saveOrder() {

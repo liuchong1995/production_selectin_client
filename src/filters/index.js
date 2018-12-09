@@ -1,11 +1,17 @@
 // set function parseTime,formatTime to filter
+import getters from '@/store/getters'
+
 export { parseTime, formatTime } from '@/utils'
+import store from '@/store'
 
 function pluralize(time, label) {
   if (time === 1) {
     return time + label
   }
   return time + label + 's'
+}
+export function parseUserName(userName) {
+  return store.getters.allUserNameMap[userName]
 }
 
 export function timeAgo(time) {

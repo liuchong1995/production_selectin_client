@@ -4,7 +4,7 @@
     <el-col :span="3">
       <el-button size="small" type="primary" @click="print">打印</el-button>
       <el-button size="small" type="info" @click="fork">克隆</el-button>
-      <el-button size="small" type="warning" @click="$router.go(-1)">返回</el-button>
+      <el-button size="small" type="warning" @click="$router.push('/selection/history')">返回</el-button>
     </el-col>
     <el-form label-position="left" :inline="true" class="demo-form-inline">
       <el-col :span="8" style="height: 63px">
@@ -14,7 +14,7 @@
       </el-col>
       <el-col :span="4" style="height: 63px">
         <el-form-item label="制单人:" style="font-size: 18px">
-          <span style="font-size: 18px">{{orderDetail.order.creator}}</span>
+          <span style="font-size: 18px">{{orderDetail.order.creator | parseUserName}}</span>
         </el-form-item>
       </el-col>
       <el-col :span="6" style="height: 63px">

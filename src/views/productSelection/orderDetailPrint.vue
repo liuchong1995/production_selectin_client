@@ -9,7 +9,7 @@
         </el-col>
         <el-col :span="4" style="height: 63px">
           <el-form-item label="制单人:" style="font-size: 18px">
-            <span style="font-size: 18px">{{orderDetail.order.creator}}</span>
+            <span style="font-size: 18px">{{orderDetail.order.creator | parseUserName}}</span>
           </el-form-item>
         </el-col>
         <el-col :span="6" style="height: 63px">
