@@ -3,6 +3,7 @@
     <el-col :span="22" style="font-size: 20px">KYOKUTOH产品选型: {{orderDetail.order.productModel}}</el-col>
     <el-col :span="2">
       <el-button size="small" type="primary" @click="print">打印</el-button>
+      <el-button size="small" type="info" @click="fork">克隆</el-button>
     </el-col>
     <el-form label-position="left" :inline="true" class="demo-form-inline">
       <el-col :span="8" style="height: 63px">
@@ -117,6 +118,9 @@
           path: `/selection/print/${this.orderId}`,
         });
         window.open(routeUrl .href, '_blank');
+      },
+      fork() {
+        this.$router.push(`/selection/fork/${this.orderId}`)
       }
     }
   }

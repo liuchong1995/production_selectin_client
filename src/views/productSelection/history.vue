@@ -60,14 +60,14 @@
           <span>{{ scope.row.creator }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="操作" align="center" width="200px" class-name="small-padding fixed-width" style="padding-left: 0;padding-right: 0">
+      <el-table-column label="操作" align="center" width="240px" class-name="small-padding fixed-width" style="padding-left: 0;padding-right: 0">
         <template slot-scope="scope" style="margin-left: 0;margin-right: 0">
-          <el-button type="info" size="mini" @click="handleFork(scope.row.orderId)" style="margin-left: 0;margin-right: 0;padding-left: 7px;padding-right: 7px">克隆</el-button>
-          <el-button type="primary" size="mini" @click="handleDetail(scope.row.orderId)" style="margin-left: 0;margin-right: 0;padding-left: 7px;padding-right: 7px">详情</el-button>
-          <el-button v-if="canModifyOrDelete(scope.row.creator)" size="mini" type="success" style="margin-left: 0;margin-right: 0;padding-left: 7px;padding-right: 7px"
+          <el-button type="info" size="mini" @click="handleFork(scope.row.orderId)" style="margin-left: 0;margin-right: 0;padding-left: 12px;padding-right: 12px">克隆</el-button>
+          <el-button type="primary" size="mini" @click="handleDetail(scope.row.orderId)" style="margin-left: 0;margin-right: 0;padding-left: 12px;padding-right: 12px">详情</el-button>
+          <el-button v-if="canModifyOrDelete(scope.row.creator)" size="mini" type="success" style="margin-left: 0;margin-right: 0;padding-left: 12px;padding-right: 12px"
                      @click="handleModify(scope.row.orderId)">修改
           </el-button>
-          <el-button v-if="canModifyOrDelete(scope.row.creator)" size="mini" type="danger" style="margin-left: 0;margin-right: 0;padding-left: 7px;padding-right: 7px"
+          <el-button v-if="canModifyOrDelete(scope.row.creator)" size="mini" type="danger" style="margin-left: 0;margin-right: 0;padding-left: 12px;padding-right: 12px"
                      @click="handleDelete(scope.row.orderId)">删除
           </el-button>
         </template>
