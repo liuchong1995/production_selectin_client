@@ -9,7 +9,3 @@
     components: { SelectDetail }
   }
 </script>
-
-<style scoped>
-
-</style>
