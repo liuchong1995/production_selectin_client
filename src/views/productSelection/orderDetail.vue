@@ -4,7 +4,7 @@
     <el-col :span="3">
       <el-button size="small" type="primary" @click="print">打印</el-button>
       <el-button size="small" type="info" @click="fork">克隆</el-button>
-      <el-button size="small" type="warning" @click="router.go(-1)">返回</el-button>
+      <el-button size="small" type="warning" @click="$router.go(-1)">返回</el-button>
     </el-col>
     <el-form label-position="left" :inline="true" class="demo-form-inline">
       <el-col :span="8" style="height: 63px">
