@@ -380,39 +380,43 @@
           }
           this.$message('当前选型下以下选项为必选项，' + mandatoryMessage)
         } else {
-          if (this.orderEntity.mountHeight) {
-            debugger
-            if (!this.isEdit){
-              this.enableWatchMountedHeight = false
-              const tempMountHeight = this.orderEntity.mountHeight
-              this.orderEntity.mountHeight = this.allMountHeight.find(ele => ele.mountingHeightId === this.orderEntity.mountHeight).height
-              await saveOrder(this.orderEntity)
-              this.orderEntity.mountHeight = tempMountHeight
-              this.enableWatchMountedHeight = true
-            } else {
-              //暂时先这样
-              const hasChangeShelf = this.allMountHeight.find(ele => ele.mountingHeightId === this.orderEntity.mountHeight)
-              debugger
-              if (hasChangeShelf){
+          this.$confirm('您确定保存本次选型么, 是否继续?', '提示', {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            type: 'warning'
+          }).then(async() => {
+            if (this.orderEntity.mountHeight) {
+              if (!this.isEdit){
                 this.enableWatchMountedHeight = false
                 const tempMountHeight = this.orderEntity.mountHeight
-                this.orderEntity.mountHeight = hasChangeShelf.height
-                await updateOrder(this.orderEntity)
+                this.orderEntity.mountHeight = this.allMountHeight.find(ele => ele.mountingHeightId === this.orderEntity.mountHeight).height
+                await saveOrder(this.orderEntity)
                 this.orderEntity.mountHeight = tempMountHeight
                 this.enableWatchMountedHeight = true
+              } else {
+                //暂时先这样
+                const hasChangeShelf = this.allMountHeight.find(ele => ele.mountingHeightId === this.orderEntity.mountHeight)
+                if (hasChangeShelf){
+                  this.enableWatchMountedHeight = false
+                  const tempMountHeight = this.orderEntity.mountHeight
+                  this.orderEntity.mountHeight = hasChangeShelf.height
+                  await updateOrder(this.orderEntity)
+                  this.orderEntity.mountHeight = tempMountHeight
+                  this.enableWatchMountedHeight = true
+                } else {
+                  await updateOrder(this.orderEntity)
+                }
+              }
+            } else {
+              if (!this.isEdit){
+                await saveOrder(this.orderEntity)
               } else {
                 await updateOrder(this.orderEntity)
               }
             }
-          } else {
-            if (!this.isEdit){
-              await saveOrder(this.orderEntity)
-            } else {
-              await updateOrder(this.orderEntity)
-            }
-          }
-          const messsage = !this.isEdit ? '保存成功!' : '修改成功!'
-          this.$message(messsage)
+            const messsage = !this.isEdit ? '保存成功!' : '修改成功!'
+            this.$message(messsage)
+          })
         }
       },
       getShelfConstraintInstallId() {

@@ -133,7 +133,7 @@
         [this.productList, this.userList] = await Promise.all([fetchList(), getAllUsers()])
       },
       async handleDelete(orderId) {
-        this.$confirm('您确定删除本条订单么, 是否继续?', '提示', {
+        this.$confirm('您确定删除这个选型么, 是否继续?', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
           type: 'warning'
