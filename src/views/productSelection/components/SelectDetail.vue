@@ -381,12 +381,29 @@
           this.$message('当前选型下以下选项为必选项，' + mandatoryMessage)
         } else {
           if (this.orderEntity.mountHeight) {
-            this.enableWatchMountedHeight = false
-            const tempMountHeight = this.orderEntity.mountHeight
-            this.orderEntity.mountHeight = this.allMountHeight.find(ele => ele.mountingHeightId === this.orderEntity.mountHeight).height
-            await saveOrder(this.orderEntity)
-            this.orderEntity.mountHeight = tempMountHeight
-            this.enableWatchMountedHeight = true
+            debugger
+            if (!this.isEdit){
+              this.enableWatchMountedHeight = false
+              const tempMountHeight = this.orderEntity.mountHeight
+              this.orderEntity.mountHeight = this.allMountHeight.find(ele => ele.mountingHeightId === this.orderEntity.mountHeight).height
+              await saveOrder(this.orderEntity)
+              this.orderEntity.mountHeight = tempMountHeight
+              this.enableWatchMountedHeight = true
+            } else {
+              //暂时先这样
+              const hasChangeShelf = this.allMountHeight.find(ele => ele.mountingHeightId === this.orderEntity.mountHeight)
+              debugger
+              if (hasChangeShelf){
+                this.enableWatchMountedHeight = false
+                const tempMountHeight = this.orderEntity.mountHeight
+                this.orderEntity.mountHeight = hasChangeShelf.height
+                await updateOrder(this.orderEntity)
+                this.orderEntity.mountHeight = tempMountHeight
+                this.enableWatchMountedHeight = true
+              } else {
+                await updateOrder(this.orderEntity)
+              }
+            }
           } else {
             if (!this.isEdit){
               await saveOrder(this.orderEntity)
