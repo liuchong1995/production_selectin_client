@@ -136,7 +136,7 @@
   import { getCategory, getMenuTree, refactorCategoryMenu } from '@/api/category'
   import { getAllHeight, getAllInstallation, getAllMountHeight, getShelfConstraint } from '@/api/shelf'
   import { getOptionalListByCateId, getOptionalListBySelected, getComponent, hasAttachment } from '@/api/component'
-  import { generateModelNumber, getMandatoryResult, saveOrder, getOrderDetail, updateOrder} from '@/api/order'
+  import { generateModelNumber, getMandatoryResult, saveOrder, getOrder, updateOrder} from '@/api/order'
   import PanThumb from '@/components/PanThumb/index'
 
   export default {
@@ -203,6 +203,10 @@
       isEdit: {
         type: Boolean,
         default: false
+      },
+      isFork:{
+        type: Boolean,
+        default: false
       }
     },
     async mounted() {
@@ -218,7 +222,7 @@
     methods: {
       async loadEditDate(){
         const orderId = this.$route.params && this.$route.params.orderId
-        const orderDetail = await getOrderDetail(orderId)
+        const orderDetail = await getOrder(orderId)
         this.orderEntity = orderDetail.order
         this.productId = this.orderEntity.productId
         await this.loadTreeData(this.productId)
@@ -226,7 +230,6 @@
         this.refactorTreeRequest.selectedList = orderDetail.components.sort((a,b) => a.componentId - b.componentId)
         this.selectedList = this.refactorTreeRequest.selectedList
         this.selectedTypeList = this.selectedList.map(ele => ele.firstCategoryId)
-
       },
       async loadTreeData(prdId) {
         const parentId = 0;
@@ -357,6 +360,7 @@
       async generateModelNumber() {
         let generateOrderModelNumberRequest = this.refactorTreeRequest
         generateOrderModelNumberRequest.shelfHeight = this.orderEntity.shelfHeight
+        debugger
         generateOrderModelNumberRequest.mountHeight = this.allMountHeight.find(ele => ele.mountingHeightId === this.orderEntity.mountHeight)
         this.orderEntity.productModel = await generateModelNumber(generateOrderModelNumberRequest)
       },
@@ -386,7 +390,7 @@
             type: 'warning'
           }).then(async() => {
             if (this.orderEntity.mountHeight) {
-              if (!this.isEdit){
+              if (!this.isEdit && !this.isFork){
                 this.enableWatchMountedHeight = false
                 const tempMountHeight = this.orderEntity.mountHeight
                 this.orderEntity.mountHeight = this.allMountHeight.find(ele => ele.mountingHeightId === this.orderEntity.mountHeight).height
@@ -395,26 +399,41 @@
                 this.enableWatchMountedHeight = true
               } else {
                 //暂时先这样
-                const hasChangeShelf = this.allMountHeight.find(ele => ele.mountingHeightId === this.orderEntity.mountHeight)
-                if (hasChangeShelf){
-                  this.enableWatchMountedHeight = false
-                  const tempMountHeight = this.orderEntity.mountHeight
-                  this.orderEntity.mountHeight = hasChangeShelf.height
-                  await updateOrder(this.orderEntity)
-                  this.orderEntity.mountHeight = tempMountHeight
-                  this.enableWatchMountedHeight = true
+                if (this.isFork) {
+                  const hasChangeShelf = this.allMountHeight.find(ele => ele.mountingHeightId === this.orderEntity.mountHeight)
+                  if (hasChangeShelf){
+                    this.enableWatchMountedHeight = false
+                    const tempMountHeight = this.orderEntity.mountHeight
+                    this.orderEntity.mountHeight = hasChangeShelf.height
+                    await saveOrder(this.orderEntity)
+                    this.orderEntity.mountHeight = tempMountHeight
+                    this.enableWatchMountedHeight = true
+                  } else {
+                    await saveOrder(this.orderEntity)
+                  }
                 } else {
-                  await updateOrder(this.orderEntity)
+                  const hasChangeShelf = this.allMountHeight.find(ele => ele.mountingHeightId === this.orderEntity.mountHeight)
+                  if (hasChangeShelf){
+                    this.enableWatchMountedHeight = false
+                    const tempMountHeight = this.orderEntity.mountHeight
+                    this.orderEntity.mountHeight = hasChangeShelf.height
+                    await updateOrder(this.orderEntity)
+                    this.orderEntity.mountHeight = tempMountHeight
+                    this.enableWatchMountedHeight = true
+                  } else {
+                    await updateOrder(this.orderEntity)
+                  }
                 }
+
               }
             } else {
-              if (!this.isEdit){
+              if (!this.isEdit && !this.isFork){
                 await saveOrder(this.orderEntity)
               } else {
                 await updateOrder(this.orderEntity)
               }
             }
-            const messsage = !this.isEdit ? '保存成功!' : '修改成功!'
+            const messsage = !this.isEdit && !this.isFork ? '保存成功!' : !this.isFork ? '修改成功!' : '克隆成功!'
             this.$message(messsage)
           })
         }

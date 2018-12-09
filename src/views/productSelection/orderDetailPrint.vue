@@ -48,7 +48,7 @@
           <el-card class="box-card">
             <div slot="header" class="clearfix" style="text-align: center;font-size: 14px;padding:2px">
                 <el-col :span="24" style="font-size: 20px">{{comp.componentName}}</el-col>
-                <el-col :span="24" style="font-size: 16px;margin-top: 10px">CDK-BAYO-S01</el-col>
+                <el-col :span="24" style="font-size: 16px;margin-top: 10px">{{comp.componentModelNumber}}</el-col>
             </div>
             <div class="component-item">
                 <pan-thumb width="265px" height="280px"

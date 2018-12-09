@@ -97,6 +97,13 @@ export const asyncRouterMap = [
         meta: { title: '修改选型', noCache: true}
       },
       {
+        path: 'fork/:orderId(\\d+)',
+        name: 'fork',
+        hidden: true,
+        component: () => import('@/views/productSelection/fork'),
+        meta: { title: '克隆选型', noCache: true}
+      },
+      {
         path: 'detail/:orderId(\\d+)',
         name: 'orderDetail',
         hidden: true,

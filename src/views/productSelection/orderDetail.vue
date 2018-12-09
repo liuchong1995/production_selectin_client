@@ -56,7 +56,7 @@
             </el-tooltip>
             <el-tooltip class="item" effect="light" :content="comp.componentModelNumber" placement="bottom-end"
                         :open-delay="300">
-              <el-col :span="24" style="font-size: 16px;margin-top: 10px">CDK-BAYO-S01</el-col>
+              <el-col :span="24" style="font-size: 16px;margin-top: 10px">{{comp.componentModelNumber}}</el-col>
             </el-tooltip>
           </div>
           <div class="component-item">

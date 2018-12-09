@@ -53,3 +53,10 @@ export function getOrderDetail(orderId) {
     method: 'get',
   })
 }
+
+export function getOrder(orderId) {
+  return request({
+    url: `/order/${orderId}`,
+    method: 'get',
+  })
+}
