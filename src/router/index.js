@@ -10,17 +10,17 @@ Vue.use(Router)
 import Layout from '../views/layout/Layout'
 
 /**
-* hidden: true                   if `hidden:true` will not show in the sidebar(default is false)
-* alwaysShow: true               if set true, will always show the root menu, whatever its child routes length
-*                                if not set alwaysShow, only more than one route under the children
-*                                it will becomes nested mode, otherwise not show the root menu
-* redirect: noredirect           if `redirect:noredirect` will no redirect in the breadcrumb
-* name:'router-name'             the name is used by <keep-alive> (must set!!!)
-* meta : {
+ * hidden: true                   if `hidden:true` will not show in the sidebar(default is false)
+ * alwaysShow: true               if set true, will always show the root menu, whatever its child routes length
+ *                                if not set alwaysShow, only more than one route under the children
+ *                                it will becomes nested mode, otherwise not show the root menu
+ * redirect: noredirect           if `redirect:noredirect` will no redirect in the breadcrumb
+ * name:'router-name'             the name is used by <keep-alive> (must set!!!)
+ * meta : {
     title: 'title'               the name show in submenu and breadcrumb (recommend set)
     icon: 'svg-name'             the icon show in the sidebar,
   }
-**/
+ **/
 export const constantRouterMap = [
   {
     path: '/redirect',
@@ -30,7 +30,7 @@ export const constantRouterMap = [
       {
         path: '/redirect/:path*',
         component: () => import('@/views/redirect/index'),
-        meta: {noCache: true },
+        meta: { noCache: true }
       }
     ]
   },
@@ -50,9 +50,9 @@ export const constantRouterMap = [
       path: 'dashboard',
       component: () => import('@/views/dashboard/index'),
       name: 'Dashboard',
-      meta: { title: '首页', icon: 'dashboard', noCache: true }
+      meta: { title: '首页', icon: 'dashboard' }
     }]
-  },
+  }
 ]
 
 export default new Router({
@@ -80,35 +80,35 @@ export const asyncRouterMap = [
         path: 'history',
         name: 'history',
         component: () => import('@/views/productSelection/history'),
-        meta: { title: '历史选型', icon: 'list'}
+        meta: { title: '历史选型', icon: 'list' }
       },
       {
         path: 'selecting/:productId(\\d+)',
         name: 'selecting',
         hidden: true,
         component: () => import('@/views/productSelection/selecting'),
-        meta: { title: '选型'}
+        meta: { title: '选型' }
       },
       {
         path: 'edit/:orderId(\\d+)',
-        name: 'edit',
+        name: 'editOrder',
         hidden: true,
         component: () => import('@/views/productSelection/edit'),
-        meta: { title: '修改选型', noCache: true}
+        meta: { title: '修改选型'}
       },
       {
         path: 'fork/:orderId(\\d+)',
         name: 'fork',
         hidden: true,
         component: () => import('@/views/productSelection/fork'),
-        meta: { title: '克隆选型', noCache: true}
+        meta: { title: '克隆选型' }
       },
       {
         path: 'detail/:orderId(\\d+)',
         name: 'orderDetail',
         hidden: true,
         component: () => import('@/views/productSelection/orderDetail'),
-        meta: { title: '选型详情'}
+        meta: { title: '选型详情' }
       }
     ]
   },
