@@ -11,7 +11,7 @@
         class="tags-view-item"
         @click.middle.native="closeSelectedTag(tag)"
         @contextmenu.prevent.native="openMenu(tag,$event)">
-        {{ generateTitle(tag.title) }}
+        {{ generateTitle(tag.title,tag.path) }}
         <span class="el-icon-close" @click.prevent.stop="closeSelectedTag(tag)" />
       </router-link>
     </scroll-pane>
