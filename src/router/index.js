@@ -112,6 +112,73 @@ export const asyncRouterMap = [
       }
     ]
   },
-
+  {
+    path: '/data',
+    component: Layout,
+    redirect: '/data/constraint/commonConstraint',
+    name: 'data',
+    alwaysShow: true,
+    meta: {
+      title: '数据维护',
+      icon: 'data'
+    },
+    children: [
+      {
+        path: 'constraint',
+        component: () => import('@/views/dataManage/constraint/index'), // Parent router-view
+        name: 'newConstraint',
+        meta: { title: '新建约束', icon: 'new'},
+        redirect: '/data/constraint/commonConstraint',
+        children: [
+          {
+            path: 'commonConstraint',
+            component: () => import('@/views/dataManage/constraint/commonConstraint'),
+            name: 'commonConstraint',
+            meta: { title: '普通约束' }
+          },
+          {
+            path: 'shelfConstraint',
+            component: () => import('@/views/dataManage/constraint/shelfConstraint'),
+            name: 'shelfConstraint',
+            meta: { title: '架子约束' }
+          }
+        ]
+      },
+      {
+        path: 'constraintManage',
+        name: 'constraintManage',
+        component: () => import('@/views/dataManage/constraintManage'),
+        meta: { title: '约束管理', icon: 'constraint' }
+      },
+      {
+        path: 'componentManage',
+        name: 'componentManage',
+        component: () => import('@/views/dataManage/componentManage'),
+        meta: { title: '部件管理', icon: 'component' }
+      },
+      {
+        path: 'categoryManage',
+        name: 'categoryManage',
+        component: () => import('@/views/dataManage/categoryManage'),
+        meta: { title: '类别管理', icon: 'category' }
+      }
+    ]
+  },
+  {
+    path: '/user',
+    component: Layout,
+    redirect: '/user/userManage',
+    name: 'user',
+    alwaysShow: true,
+    meta: { title: '用户', icon: 'user' },
+    children: [
+      {
+        path: 'userManage',
+        name: 'userManage',
+        component: () => import('@/views/userManage/userManage'),
+        meta: { title: '用户管理', icon: 'manage' }
+      }
+    ]
+  },
   { path: '*', redirect: '/404', hidden: true }
 ]
