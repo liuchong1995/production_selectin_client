@@ -11,6 +11,17 @@ export function getMenuTree(prdId,parentId) {
   })
 }
 
+export function getAllMenuTree(prdId,parentId) {
+  return request({
+    url: '/category/menu',
+    method: 'get',
+    params: {
+      prdId,
+      parentId
+    }
+  })
+}
+
 export function getCategory(cateId) {
   return request({
     url: `/category/${cateId}`,
