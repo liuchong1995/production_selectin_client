@@ -1,55 +1,57 @@
 <template>
-  <el-form ref="form" :model="form" label-width="120px" style="padding: 50px">
+  <el-form ref="compForm" :model="componentAddRequest" :rules="rules" label-width="120px" style="padding: 50px">
     <el-form-item label="所属产品类型">
-      <el-select v-model="form.region" placeholder="请选择产品类型">
-        <el-option label="区域一" value="shanghai"></el-option>
-        <el-option label="区域二" value="beijing"></el-option>
+      <el-select v-model="componentAddRequest.productId" placeholder="请选择产品类型">
+        <el-option v-for="(product,index) in productList" :key="index" :value="product.productId"
+                   :label="product.productName"></el-option>
       </el-select>
     </el-form-item>
-    <el-form-item label="所属分类">
-      <el-select v-model="form.region" placeholder="请选择一级分类">
-        <el-option label="区域一" value="shanghai"></el-option>
-        <el-option label="区域二" value="beijing"></el-option>
+    <el-form-item label="所属分类" v-show="componentAddRequest.productId">
+      <el-select v-model="firstCategoryId" placeholder="请选择一级分类">
+        <el-option :value="firstCategory.categoryId" v-for="(firstCategory,index) in firstCategoryList" :key="index"
+                   :label="firstCategory.categoryName"></el-option>
       </el-select>
-      <el-select v-model="form.region" placeholder="请选择二级分类">
-        <el-option label="区域一" value="shanghai"></el-option>
-        <el-option label="区域二" value="beijing"></el-option>
+      <el-select v-model="secondCategoryId" v-show="firstCategoryId" placeholder="请选择二级分类">
+        <el-option :value="secondCategory.categoryId" v-for="(secondCategory,index) in secondCategoryList" :key="index"
+                   :label="secondCategory.categoryName"></el-option>
       </el-select>
-      <el-select v-model="form.region" placeholder="请选择三级分类">
-        <el-option label="区域一" value="shanghai"></el-option>
-        <el-option label="区域二" value="beijing"></el-option>
+      <el-select v-model="thirdCategoryId" v-show="secondCategoryId" placeholder="请选择三级分类">
+        <el-option :value="thirdCategory.categoryId" v-for="(thirdCategory,index) in thirdCategoryList" :key="index"
+                   :label="thirdCategory.categoryName"></el-option>
       </el-select>
-      <el-select v-model="form.region" placeholder="请选择四级分类">
-        <el-option label="区域一" value="shanghai"></el-option>
-        <el-option label="区域二" value="beijing"></el-option>
+      <el-select v-model="forthCategoryId" v-show="thirdCategoryId" placeholder="请选择四级分类">
+        <el-option :value="forthCategory.categoryId" v-for="(forthCategory,index) in forthCategoryList" :key="index"
+                   :label="forthCategory.categoryName"></el-option>
       </el-select>
     </el-form-item>
-    <el-form-item label="产品名称">
-      <el-input v-model="form.name" placeholder="产品名称" style="width: 300px"></el-input>
+    <el-form-item label="产品名称" prop="componentName">
+      <el-input v-model="componentAddRequest.componentName" placeholder="产品名称" style="width: 300px"></el-input>
     </el-form-item>
     <el-row>
       <el-col :span="6">
-        <el-form-item label="产品型号">
-          <el-input v-model="form.name" placeholder="产品型号" style="width: 300px"></el-input>
+        <el-form-item label="产品型号" prop="componentModelNumber">
+          <el-input v-model="componentAddRequest.componentModelNumber" placeholder="产品型号"
+                    style="width: 300px"></el-input>
         </el-form-item>
       </el-col>
       <el-col :span="4">
-        <el-form-item label="产品短码">
-          <el-input v-model="form.name" placeholder="产品短码" style="width: 150px"></el-input>
+        <el-form-item label="产品短码" prop="componentShortNumber">
+          <el-input v-model="componentAddRequest.componentShortNumber" placeholder="产品短码"
+                    style="width: 150px"></el-input>
         </el-form-item>
       </el-col>
       <el-col :span="6">
         <el-form-item label="型号生成码">
-          <el-input v-model="form.name" placeholder="型号生成码" style="width: 300px"></el-input>
+          <el-input v-model="componentAddRequest.componentKey" placeholder="型号生成码" style="width: 300px"></el-input>
         </el-form-item>
       </el-col>
       <el-col :span="6">
-          <el-form-item label="产品类型">
-            <el-radio-group v-model="form.resource" size="small">
-              <el-radio-button label="部件"></el-radio-button>
-              <el-radio-button label="规格"></el-radio-button>
-            </el-radio-group>
-          </el-form-item>
+        <el-form-item label="产品类型">
+          <el-radio-group v-model="componentAddRequest.componentType" size="small">
+            <el-radio-button :label="1">部件</el-radio-button>
+            <el-radio-button :label="0">规格</el-radio-button>
+          </el-radio-group>
+        </el-form-item>
       </el-col>
     </el-row>
     <el-row>
@@ -69,7 +71,8 @@
       </el-col>
       <el-col :span="12">
         <el-form-item label="产品描述">
-          <el-input :rows="3" v-model="form.name" type="textarea" placeholder="产品描述" style="width: 400px"></el-input>
+          <el-input :rows="3" v-model="componentAddRequest.componentReamrk" type="textarea" placeholder="产品描述"
+                    style="width: 400px"></el-input>
         </el-form-item>
       </el-col>
     </el-row>
@@ -83,7 +86,7 @@
       </div>
     </el-form-item>
     <el-form-item>
-      <el-button type="primary" @click="onSubmit">立即创建</el-button>
+      <el-button type="primary" @click="onSubmit">保存</el-button>
       <el-button>取消</el-button>
     </el-form-item>
   </el-form>
@@ -91,7 +94,10 @@
 
 <script>
   import E from 'wangeditor'
-  import {uploadUrl, compImgUploadUrl} from '@/api/component'
+  import { uploadUrl, compImgUploadUrl, isExit, addComp } from '@/api/component'
+  import { fetchList } from '@/api/product'
+  import { getOneLevelCategory } from '@/api/category'
+
   export default {
     name: 'ComponentDetail',
     props: {
@@ -101,44 +107,131 @@
       }
     },
     data() {
+      const validateComponentName = async(rule, value, callback) => {
+        if (!value) {
+          callback(new Error('请输入产品名称'))
+        } else {
+          callback()
+        }
+      }
+      const validateComponentModelNumber = async(rule, value, callback) => {
+        if (!value) {
+          callback(new Error('请输入产品型号'))
+        } else {
+          const res = await isExit(this.componentAddRequest)
+          if (res.length > 0) {
+            callback(new Error('已存在相同的产品型号'))
+          } else {
+            callback()
+          }
+        }
+      }
+      const validateComponentShortNumber = async(rule, value, callback) => {
+        if (!value) {
+          callback(new Error('请输入产品短码'))
+        } else {
+          const res = await isExit(this.componentAddRequest)
+          if (res.length > 0) {
+            callback(new Error('已存在相同的产品短码'))
+          } else {
+            callback()
+          }
+        }
+      }
       return {
-        form: {
-          name: '',
-          region: '',
-          date1: '',
-          date2: '',
-          delivery: false,
-          type: [],
-          resource: '',
-          desc: ''
+
+        productList: [],
+        componentAddRequest: {
+          productId: undefined,
+          componentType: 1,
+          componentImage: '',
+          componentName: ''
         },
-        imageUrl:'',
+        firstCategoryList: [],
+        secondCategoryList: [],
+        thirdCategoryList: [],
+        forthCategoryList: [],
+        firstCategoryId: undefined,
+        secondCategoryId: undefined,
+        thirdCategoryId: undefined,
+        forthCategoryId: undefined,
+        imageUrl: '',
         editor: null,
-        compImgUploadUrl
+        compImgUploadUrl,
+        rules: {
+          componentName: [{ validator: validateComponentName, trigger: 'blur' }],
+          componentModelNumber: [{ validator: validateComponentModelNumber, trigger: 'blur' }],
+          componentShortNumber: [{ validator: validateComponentShortNumber, trigger: 'blur' }]
+        }
       }
     },
-    mounted(){
+    mounted() {
       this.setEditor()
+      this.loadPageData()
+    },
+    computed: {
+      currentUserName () {
+        return this.$store.getters.name
+      }
     },
     methods: {
       onSubmit() {
-        console.log('submit!');
+        this.$refs.compForm.validate(async valid => {
+          if (valid) {
+            this.componentAddRequest.categoryIds = []
+            if (this.firstCategoryId) {
+              this.componentAddRequest.categoryIds.push(this.firstCategoryId)
+            }
+            if (this.secondCategoryId) {
+              this.componentAddRequest.categoryIds.push(this.secondCategoryId)
+            }
+            if (this.thirdCategoryId) {
+              this.componentAddRequest.categoryIds.push(this.thirdCategoryId)
+            }
+            if (this.forthCategoryId) {
+              this.componentAddRequest.categoryIds.push(this.forthCategoryId)
+            }
+            this.componentAddRequest.componentDetail = this.editor.txt.html()
+
+            let result = await this.checkForm()
+            if (result.code !== 200) {
+              this.$message(result.msg)
+              return false
+            }
+            this.componentAddRequest.creator = this.currentUserName
+            this.$confirm('您确定新增这个部件么, 是否继续?', '提示', {
+              confirmButtonText: '确定',
+              cancelButtonText: '取消',
+              type: 'warning'
+            }).then(async() => {
+              await addComp(this.componentAddRequest)
+              this.$message({
+                type: 'success',
+                message: '新增成功'
+              })
+            })
+          } else {
+            this.$message('表单中还存在错误的输入项')
+            return false
+          }
+        })
       },
       handleAvatarSuccess(res, file) {
-        this.imageUrl = `/PS/${res.url}`;
+        this.imageUrl = `/PS/${res.url}`
+        this.componentAddRequest.componentImage = res.url
       },
       beforeAvatarUpload(file) {
-        const isJPG = file.type === 'image/jpeg' || file.type === 'image/png';
-        const isLt2M = file.size / 1024 / 1024 < 5;
+        const isJPG = file.type === 'image/jpeg' || file.type === 'image/png'
+        const isLt2M = file.size / 1024 / 1024 < 5
         if (!isJPG) {
-          this.$message.error('上传头像图片只能是 JPG/PNG 格式!');
+          this.$message.error('上传头像图片只能是 JPG/PNG 格式!')
         }
         if (!isLt2M) {
-          this.$message.error('上传头像图片大小不能超过 5MB!');
+          this.$message.error('上传头像图片大小不能超过 5MB!')
         }
-        return isJPG && isLt2M;
+        return isJPG && isLt2M
       },
-      setEditor () {
+      setEditor() {
         this.editor = new E(this.$refs.toolbar, this.$refs.editor)
         this.editor.customConfig.uploadImgServer = uploadUrl
         this.editor.customConfig.uploadFileName = 'photoList'
@@ -159,6 +252,91 @@
         ]
         // 创建富文本编辑器
         this.editor.create()
+      },
+      async loadPageData() {
+        this.productList = await fetchList()
+      },
+      async checkForm() {
+        let result = {}
+        if (!this.editor.txt.text()) {
+          if (this.editor.txt.html().indexOf('<img') < 0) {
+            result.msg = '请输入部件详细描述'
+            result.code = 500
+            return result
+          }
+        }
+        let allCategory = [...this.firstCategoryList, ...this.secondCategoryList, ...this.thirdCategoryList, ...this.forthCategoryList]
+        let lastCate = allCategory.find(ele => ele.categoryId === this.componentAddRequest.categoryIds[this.componentAddRequest.categoryIds.length - 1])
+        if (!lastCate.isLeaf) {
+          const query = {
+            productId: this.componentAddRequest.productId,
+            parentId: lastCate.categoryId
+          }
+          const isRealLeaf = await getOneLevelCategory(query)
+          if (isRealLeaf.length > 0){
+            result.msg = '只能在叶子分类添加部件'
+            result.code = 500
+            return result
+          }
+        }
+        if (!this.componentAddRequest.componentImage) {
+          result.msg = '请上传产品图片'
+          result.code = 500
+          return result
+        }
+        result.msg = 'ok'
+        result.code = 200
+        return result
+      }
+    },
+    watch: {
+      'componentAddRequest.productId': async function(newVal) {
+        if (newVal) {
+          const query = {
+            productId: this.componentAddRequest.productId,
+            parentId: 0
+          }
+          this.firstCategoryList = await getOneLevelCategory(query)
+        }
+        this.firstCategoryId = undefined
+        this.secondCategoryId = undefined
+        this.thirdCategoryId = undefined
+        this.forthCategoryId = undefined
+
+      },
+      firstCategoryId: async function(newVal) {
+        if (newVal) {
+          const query = {
+            productId: this.componentAddRequest.productId,
+            parentId: newVal
+          }
+          this.secondCategoryList = await getOneLevelCategory(query)
+        }
+        this.secondCategoryId = undefined
+        this.thirdCategoryId = undefined
+        this.forthCategoryId = undefined
+      },
+      secondCategoryId: async function(newVal) {
+        if (newVal) {
+          const query = {
+            productId: this.componentAddRequest.productId,
+            parentId: newVal
+          }
+          this.thirdCategoryList = await getOneLevelCategory(query)
+        }
+        this.thirdCategoryId = undefined
+        this.forthCategoryId = undefined
+
+      },
+      thirdCategoryId: async function(newVal) {
+        if (newVal) {
+          const query = {
+            productId: this.componentAddRequest.productId,
+            parentId: newVal
+          }
+          this.forthCategoryList = await getOneLevelCategory(query)
+        }
+        this.forthCategoryId = undefined
       }
     }
   }
@@ -172,9 +350,11 @@
     position: relative;
     overflow: hidden;
   }
+
   .avatar-uploader .el-upload:hover {
     border-color: #409EFF;
   }
+
   .avatar-uploader-icon {
     font-size: 28px;
     color: #8c939d;
@@ -183,18 +363,22 @@
     line-height: 178px;
     text-align: center;
   }
+
   .avatar {
     width: 178px;
     height: 178px;
     display: block;
   }
+
   .editor {
     width: 80%;
     margin: 0;
   }
+
   .toolbar {
     border: 1px solid #ccc;
   }
+
   .text {
     border: 1px solid #ccc;
     height: 200px;

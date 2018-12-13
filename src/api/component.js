@@ -44,5 +44,21 @@ export function deleteOrRecovery(compId) {
     method: 'delete',
   })
 }
+
+export function isExit(data) {
+  return request({
+    url: `/component/isExit`,
+    method: 'post',
+    data
+  })
+}
+
+export function addComp(data) {
+  return request({
+    url: `/component/insert`,
+    method: 'post',
+    data
+  })
+}
 export const uploadUrl = 'http://localhost:8888/photo/wangEditorUpload'
 export const compImgUploadUrl = 'http://localhost:8888/component/uploadFile'
