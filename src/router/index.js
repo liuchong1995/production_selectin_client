@@ -154,7 +154,21 @@ export const asyncRouterMap = [
         path: 'componentManage',
         name: 'componentManage',
         component: () => import('@/views/dataManage/componentManage'),
-        meta: { title: '部件管理', icon: 'component' }
+        meta: { title: '部件管理', icon: 'component' },
+      },
+      {
+        path: 'componentAdd',
+        component: () => import('@/views/dataManage/components/componentAdd'),
+        name: 'componentAdd',
+        hidden: true,
+        meta: { title: '新增部件' }
+      },
+      {
+        path: 'componentEdit/:compId(\\d+)',
+        component: () => import('@/views/dataManage/components/componentEdit'),
+        name: 'componentEdit',
+        hidden: true,
+        meta: { title: '编辑部件' }
       },
       {
         path: 'categoryManage',

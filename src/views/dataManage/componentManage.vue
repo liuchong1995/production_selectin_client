@@ -20,7 +20,8 @@
       <el-input v-model="compSearchRequest.componentModelNumber" placeholder="模型号" style="width: 350px;"
                 class="filter-item"
                 size="small"/>
-      <el-button class="filter-item" type="primary" size="small" icon="el-icon-search" @click="getList">查询</el-button>
+      <el-button class="filter-item" type="info" size="small" icon="el-icon-search" @click="getList">查询</el-button>
+      <el-button class="filter-item" type="primary" size="small" icon="el-icon-plus" @click="$router.push(`/data/componentAdd`)">新增部件</el-button>
     </div>
 
     <el-table
@@ -54,7 +55,7 @@
         <template slot-scope="scope" style="margin-left: 0;margin-right: 0">
           <el-button size="mini" type="success"
                      style="margin-left: 0;margin-right: 0;padding-left: 12px;padding-right: 12px"
-                     @click="handleModify(scope.row.orderId)">修改
+                     @click="$router.push(`/data/componentEdit/${scope.row.componentId}`)">修改
           </el-button>
           <el-button size="mini" type="danger"
                      style="margin-left: 0;margin-right: 0;padding-left: 12px;padding-right: 12px"

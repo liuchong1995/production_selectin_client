@@ -44,3 +44,5 @@ export function deleteOrRecovery(compId) {
     method: 'delete',
   })
 }
+export const uploadUrl = 'http://localhost:8888/photo/wangEditorUpload'
+export const compImgUploadUrl = 'http://localhost:8888/component/uploadFile'
