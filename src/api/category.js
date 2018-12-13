@@ -1,6 +1,6 @@
 import request from '../utils/request'
 
-export function getMenuTree(prdId,parentId) {
+export function getMenuTree(prdId, parentId) {
   return request({
     url: '/category/menu',
     method: 'get',
@@ -11,7 +11,7 @@ export function getMenuTree(prdId,parentId) {
   })
 }
 
-export function getAllMenuTree(prdId,parentId) {
+export function getAllMenuTree(prdId, parentId) {
   return request({
     url: '/category/menu',
     method: 'get',
@@ -32,6 +32,33 @@ export function getCategory(cateId) {
 export function refactorCategoryMenu(data) {
   return request({
     url: `/category/refactor`,
+    method: 'post',
+    data
+  })
+}
+
+export function getOneLevelCategory(query) {
+  return request({
+    url: `/category/oneLevel`,
+    method: 'get',
+    params: {
+      productId: query.productId,
+      parentId: query.parentId
+    }
+  })
+}
+
+export function addCategory(data) {
+  return request({
+    url: `/category/add`,
+    method: 'post',
+    data
+  })
+}
+
+export function delCategory(data) {
+  return request({
+    url: `/category/delete`,
     method: 'post',
     data
   })

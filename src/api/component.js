@@ -29,3 +29,18 @@ export function hasAttachment(data) {
     data
   })
 }
+
+export function search(data) {
+  return request({
+    url: `/component/search`,
+    method: 'post',
+    data
+  })
+}
+
+export function deleteOrRecovery(compId) {
+  return request({
+    url: `/component/deleteOrRecovery/${compId}`,
+    method: 'delete',
+  })
+}
