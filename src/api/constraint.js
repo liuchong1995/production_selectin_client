@@ -22,3 +22,12 @@ export function search(data) {
     data
   })
 }
+
+
+export function addShelfConstraint(data) {
+  return request({
+    url: `/constraint/shelfConstraint/`,
+    method: 'post',
+    data
+  })
+}

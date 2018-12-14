@@ -38,10 +38,12 @@
                           placeholder="产品型号"></el-input>
               </el-form-item>
               <el-form-item label="关联单号">
-                <el-input v-model="orderEntity.relateSellId" style="width: 200px" size="small" placeholder="关联单号"></el-input>
+                <el-input v-model="orderEntity.relateSellId" style="width: 200px" size="small"
+                          placeholder="关联单号"></el-input>
               </el-form-item>
               <el-form-item label="客户名称">
-                <el-input v-model="orderEntity.customer" style="width: 200px" size="small" placeholder="客户名称"></el-input>
+                <el-input v-model="orderEntity.customer" style="width: 200px" size="small"
+                          placeholder="客户名称"></el-input>
               </el-form-item>
               <el-form-item label="最终用户">
                 <el-input v-model="orderEntity.endUser" style="width: 200px" size="small" placeholder="最终用户"></el-input>
@@ -136,7 +138,8 @@
   import { getCategory, getMenuTree, refactorCategoryMenu } from '@/api/category'
   import { getAllHeight, getAllInstallation, getAllMountHeight, getShelfConstraint } from '@/api/shelf'
   import { getOptionalListByCateId, getOptionalListBySelected, getComponent, hasAttachment } from '@/api/component'
-  import { generateModelNumber, getMandatoryResult, saveOrder, getOrder, updateOrder} from '@/api/order'
+  import { generateModelNumber, getMandatoryResult, saveOrder, getOrder, updateOrder } from '@/api/order'
+  import { fetchOne} from '@/api/product'
   import PanThumb from '@/components/PanThumb/index'
 
   export default {
@@ -149,6 +152,7 @@
         defaultExpandedKeys: [],
 
         productId: 0,
+        currentProduct: undefined,
         treeData: [],
         defaultProps: {
           label: 'categoryName',
@@ -171,7 +175,7 @@
         orderEntity: {
           productModel: '',
           shelfHeight: null,
-          mountHeight: null,
+          mountHeight: null
         },
         //所有架子及对应的高度
         allShelfHeight: {},
@@ -191,11 +195,12 @@
 
         formLabelWidth: '200px',
         //为了适配后端
-        enableWatchMountedHeight:true
+        enableWatchMountedHeight: true,
+        enableWatchShelfHeight: true
       }
     },
     computed: {
-      currentUserName () {
+      currentUserName() {
         return this.$store.getters.name
       }
     },
@@ -204,14 +209,15 @@
         type: Boolean,
         default: false
       },
-      isFork:{
+      isFork: {
         type: Boolean,
         default: false
       }
     },
     async mounted() {
-      if (!this.isEdit){
+      if (!this.isEdit) {
         this.productId = this.$route.params && this.$route.params.productId
+        this.currentProduct = await fetchOne(this.productId)
         this.refactorTreeRequest.productId = this.productId
         this.orderEntity.creator = this.currentUserName
         this.loadTreeData(this.productId)
@@ -220,14 +226,15 @@
       }
     },
     methods: {
-      async loadEditDate(){
+      async loadEditDate() {
         const orderId = this.$route.params && this.$route.params.orderId
         const orderDetail = await getOrder(orderId)
         this.orderEntity = orderDetail.order
         this.productId = this.orderEntity.productId
+        this.currentProduct = await fetchOne(this.productId)
         await this.loadTreeData(this.productId)
         this.refactorTreeRequest.productId = this.productId
-        this.refactorTreeRequest.selectedList = orderDetail.components.sort((a,b) => a.componentId - b.componentId)
+        this.refactorTreeRequest.selectedList = orderDetail.components.sort((a, b) => a.componentId - b.componentId)
         this.selectedList = this.refactorTreeRequest.selectedList
         this.selectedTypeList = this.selectedList.map(ele => ele.firstCategoryId)
       },
@@ -241,6 +248,11 @@
       deleteChoice(component) {
         let tempSelectedList = [...this.selectedList]
         let tempSelectedTypeList = [...this.selectedTypeList]
+        //如果删除架子这把安装高度和架子高度清空
+        if (component.firstCategoryId === this.currentProduct.shelfId){
+          this.orderEntity.mountHeight = undefined
+          this.orderEntity.shelfHeight = undefined
+        }
         tempSelectedList.splice(tempSelectedList.indexOf(component), 1)//删除
         tempSelectedTypeList.splice(tempSelectedTypeList.indexOf(component.firstCategoryId), 1)//删除
         this.handleAttachmentRemove(tempSelectedList, tempSelectedTypeList, component)
@@ -395,7 +407,7 @@
             type: 'warning'
           }).then(async() => {
             if (this.orderEntity.mountHeight) {
-              if (!this.isEdit && !this.isFork){
+              if (!this.isEdit && !this.isFork) {
                 this.enableWatchMountedHeight = false
                 const tempMountHeight = this.orderEntity.mountHeight
                 this.orderEntity.mountHeight = this.allMountHeight.find(ele => ele.mountingHeightId === this.orderEntity.mountHeight).height
@@ -406,7 +418,7 @@
                 //暂时先这样
                 if (this.isFork) {
                   const hasChangeShelf = this.allMountHeight.find(ele => ele.mountingHeightId === this.orderEntity.mountHeight)
-                  if (hasChangeShelf){
+                  if (hasChangeShelf) {
                     this.enableWatchMountedHeight = false
                     const tempMountHeight = this.orderEntity.mountHeight
                     this.orderEntity.mountHeight = hasChangeShelf.height
@@ -418,7 +430,7 @@
                   }
                 } else {
                   const hasChangeShelf = this.allMountHeight.find(ele => ele.mountingHeightId === this.orderEntity.mountHeight)
-                  if (hasChangeShelf){
+                  if (hasChangeShelf) {
                     this.enableWatchMountedHeight = false
                     const tempMountHeight = this.orderEntity.mountHeight
                     this.orderEntity.mountHeight = hasChangeShelf.height
@@ -432,7 +444,7 @@
 
               }
             } else {
-              if (!this.isEdit && !this.isFork){
+              if (!this.isEdit && !this.isFork) {
                 await saveOrder(this.orderEntity)
               } else {
                 await updateOrder(this.orderEntity)
@@ -466,17 +478,30 @@
         }
       },
       'orderEntity.shelfHeight': function(newValue) {
-        if (newValue) {
+        if (newValue&& this.enableWatchShelfHeight) {
           let ShelfConstraintInstallId = this.getShelfConstraintInstallId()
           if (ShelfConstraintInstallId.length > 0) {
             let currentConstraint = this.allShelfConstraint.filter(ele => ele.installation === ShelfConstraintInstallId[0])
             if (currentConstraint[0].relation === 2) {
+              this.enableWatchMountedHeight = false
+              let tempSameMountHeight = this.allMountHeight.find(ele => ele.height === newValue)
               if (!this.orderEntity.mountHeight) {
-                this.orderEntity.mountHeight = this.allMountHeight.find(ele => ele.height === newValue).mountingHeightId
+                if (!tempSameMountHeight) {
+                  this.$message('没有与此架子高度相同的安装高度！')
+                } else {
+                  this.orderEntity.mountHeight = tempSameMountHeight.mountingHeightId
+                }
+              } else if (this.orderEntity.mountHeight.height !== newValue) {
+                if (!tempSameMountHeight) {
+                  this.$message('没有与此架子高度相同的安装高度！')
+                  this.orderEntity.mountHeight = undefined
+                } else {
+                  this.orderEntity.mountHeight = tempSameMountHeight.mountingHeightId
+                }
               }
-              if (this.orderEntity.mountHeight.height !== newValue) {
-                this.orderEntity.mountHeight = this.allMountHeight.find(ele => ele.height === newValue).mountingHeightId
-              }
+              setTimeout(() => {
+                this.enableWatchMountedHeight = true
+              }, 200)
             } else if (currentConstraint[0].relation === 1) {
               this.currentAllMountHeight = this.allMountHeight.filter(ele => ele.height <= newValue - currentConstraint[0].relationValue)
             } else {
@@ -494,7 +519,17 @@
           if (ShelfConstraintInstallId.length > 0) {
             let currentConstraint = this.allShelfConstraint.filter(ele => ele.installation === ShelfConstraintInstallId[0])
             if (currentConstraint[0].relation === 2) {
-              this.orderEntity.shelfHeight = this.currentAllShelfHeight.find(ele => ele.height === this.getCurrentMounted(newValue).height)
+              this.enableWatchShelfHeight = false
+              let tempSameShelfHeight = this.currentAllShelfHeight.find(ele => ele.height === this.getCurrentMounted(newValue).height)
+              if (!tempSameShelfHeight) {
+                this.$message('没有与此安装高度相同的架子高度！')
+                this.orderEntity.shelfHeight = undefined
+              } else {
+                this.orderEntity.shelfHeight = tempSameShelfHeight.height
+              }
+              setTimeout(() => {
+                this.enableWatchShelfHeight = true
+              }, 200)
             } else if (currentConstraint[0].relation === 1) {
               this.currentAllShelfHeight = this.getCurrentShelfHeight(this.currentShelfSelectingId).filter(ele => ele.height >= this.getCurrentMounted(newValue).height + currentConstraint[0].relationValue)
             } else {

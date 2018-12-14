@@ -6,3 +6,10 @@ export function fetchList(query) {
     params: query
   })
 }
+
+export function fetchOne(prdId) {
+  return request({
+    url: `/product/${prdId}`,
+    method: 'get'
+  })
+}

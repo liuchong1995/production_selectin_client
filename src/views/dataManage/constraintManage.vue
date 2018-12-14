@@ -116,7 +116,7 @@
         forthCategory: undefined,
 
         constraintListData: {
-          total: 1
+          total: 0
         },
         //分页配置
         listQuery: {
