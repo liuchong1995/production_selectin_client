@@ -94,7 +94,7 @@
 
 <script>
   import E from 'wangeditor'
-  import { uploadUrl, compImgUploadUrl, isExit, addComp } from '@/api/component'
+  import { uploadUrl, compImgUploadUrl, isExit, addComp, getComponentToShow, updateComponent } from '@/api/component'
   import { fetchList } from '@/api/product'
   import { getOneLevelCategory } from '@/api/category'
 
@@ -119,7 +119,9 @@
           callback(new Error('请输入产品型号'))
         } else {
           const res = await isExit(this.componentAddRequest)
-          if (res.length > 0) {
+          if (!this.isEdit && res.length > 0) {
+            callback(new Error('已存在相同的产品型号'))
+          } else if (this.isEdit && res.length > 1) {
             callback(new Error('已存在相同的产品型号'))
           } else {
             callback()
@@ -131,7 +133,9 @@
           callback(new Error('请输入产品短码'))
         } else {
           const res = await isExit(this.componentAddRequest)
-          if (res.length > 0) {
+          if (!this.isEdit && res.length > 0) {
+            callback(new Error('已存在相同的产品短码'))
+          } else if (this.isEdit && res.length > 1) {
             callback(new Error('已存在相同的产品短码'))
           } else {
             callback()
@@ -139,6 +143,8 @@
         }
       }
       return {
+        //修改时的部件Id
+        componentId: undefined,
 
         productList: [],
         componentAddRequest: {
@@ -162,15 +168,20 @@
           componentName: [{ validator: validateComponentName, trigger: 'blur' }],
           componentModelNumber: [{ validator: validateComponentModelNumber, trigger: 'blur' }],
           componentShortNumber: [{ validator: validateComponentShortNumber, trigger: 'blur' }]
-        }
+        },
+        firstComeThisPage: true
       }
     },
     mounted() {
       this.setEditor()
-      this.loadPageData()
+      if (!this.isEdit) {
+        this.loadPageData()
+      } else {
+        this.initEditPage()
+      }
     },
     computed: {
-      currentUserName () {
+      currentUserName() {
         return this.$store.getters.name
       }
     },
@@ -198,16 +209,23 @@
               this.$message(result.msg)
               return false
             }
+            const operation = !this.isEdit ? '新增' : '修改'
             this.componentAddRequest.creator = this.currentUserName
-            this.$confirm('您确定新增这个部件么, 是否继续?', '提示', {
+            this.$confirm(`您确定${operation}这个部件么, 是否继续?`, '提示', {
               confirmButtonText: '确定',
               cancelButtonText: '取消',
               type: 'warning'
             }).then(async() => {
-              await addComp(this.componentAddRequest)
+              if (!this.isEdit) {
+                await addComp(this.componentAddRequest)
+              } else {
+                let updateData = {};
+                [updateData.compId, updateData.updateRequest] = [this.componentId, this.componentAddRequest]
+                await updateComponent(updateData)
+              }
               this.$message({
                 type: 'success',
-                message: '新增成功'
+                message: `${operation}成功`
               })
             })
           } else {
@@ -215,6 +233,15 @@
             return false
           }
         })
+      },
+      async initEditPage() {
+        this.componentId = this.$route.params && this.$route.params.compId;
+        [this.componentAddRequest, this.productList] = await Promise.all([getComponentToShow(this.componentId), fetchList()])
+        this.imageUrl = this.componentAddRequest.componentImage
+        this.editor.txt.html(this.componentAddRequest.componentDetail);
+        [this.firstCategoryId, this.secondCategoryId = undefined, this.thirdCategoryId = undefined, this.forthCategoryId = undefined]
+          = this.componentAddRequest.categoryIds
+        setTimeout(() => this.firstComeThisPage = false, 1000)
       },
       handleAvatarSuccess(res, file) {
         this.imageUrl = `/PS/${res.url}`
@@ -273,7 +300,7 @@
             parentId: lastCate.categoryId
           }
           const isRealLeaf = await getOneLevelCategory(query)
-          if (isRealLeaf.length > 0){
+          if (isRealLeaf.length > 0) {
             result.msg = '只能在叶子分类添加部件'
             result.code = 500
             return result
@@ -298,11 +325,12 @@
           }
           this.firstCategoryList = await getOneLevelCategory(query)
         }
-        this.firstCategoryId = undefined
-        this.secondCategoryId = undefined
-        this.thirdCategoryId = undefined
-        this.forthCategoryId = undefined
-
+        if (!this.isEdit || !this.firstComeThisPage) {
+          this.firstCategoryId = undefined
+          this.secondCategoryId = undefined
+          this.thirdCategoryId = undefined
+          this.forthCategoryId = undefined
+        }
       },
       firstCategoryId: async function(newVal) {
         if (newVal) {
@@ -312,9 +340,11 @@
           }
           this.secondCategoryList = await getOneLevelCategory(query)
         }
-        this.secondCategoryId = undefined
-        this.thirdCategoryId = undefined
-        this.forthCategoryId = undefined
+        if (!this.isEdit || !this.firstComeThisPage) {
+          this.secondCategoryId = undefined
+          this.thirdCategoryId = undefined
+          this.forthCategoryId = undefined
+        }
       },
       secondCategoryId: async function(newVal) {
         if (newVal) {
@@ -324,9 +354,10 @@
           }
           this.thirdCategoryList = await getOneLevelCategory(query)
         }
-        this.thirdCategoryId = undefined
-        this.forthCategoryId = undefined
-
+        if (!this.isEdit || !this.firstComeThisPage) {
+          this.thirdCategoryId = undefined
+          this.forthCategoryId = undefined
+        }
       },
       thirdCategoryId: async function(newVal) {
         if (newVal) {
@@ -336,7 +367,9 @@
           }
           this.forthCategoryList = await getOneLevelCategory(query)
         }
-        this.forthCategoryId = undefined
+        if (!this.isEdit || !this.firstComeThisPage) {
+          this.forthCategoryId = undefined
+        }
       }
     }
   }

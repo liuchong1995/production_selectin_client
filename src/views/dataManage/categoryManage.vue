@@ -82,6 +82,12 @@
             <el-option label="否" :value="false"></el-option>
           </el-select>
         </el-form-item>
+        <el-form-item v-show="grade === 1" label="是否为电压类别" :label-width="formLabelWidth">
+          <el-select v-model="categoryAddRequest.isVoltage" placeholder="是否为电压类别">
+            <el-option label="是" :value="true"></el-option>
+            <el-option label="否" :value="false"></el-option>
+          </el-select>
+        </el-form-item>
         <el-form-item v-show="grade === 1" label="排序号" :label-width="formLabelWidth">
           <el-input type="number" v-model="categoryAddRequest.categoryOrder" auto-complete="off" placeholder="排序号"></el-input>
         </el-form-item>
@@ -113,6 +119,7 @@
           isMainCate: false,
           isInstallation: false,
           isShelf: false,
+          isVoltage: false,
           categoryOrder: null
         },
         //层级号
@@ -149,7 +156,6 @@
         const sonCate = await getOneLevelCategory(query)
         if (sonCate.length > 0){
           this.$message('该分类还有子分类，无法删除')
-          return
         } else {
           await delCategory(category)
           this.$message('删除成功')
@@ -178,7 +184,7 @@
         this.currentCategoryList = await getOneLevelCategory(query)
       },
       async newCate(){
-        if (this.currentProduct.productId){
+        if (this.currentProduct){
           this.dialogFormVisible = true
         }
       },
@@ -224,20 +230,30 @@
         if (newVal){
           this.categoryAddRequest.isInstallation = false
           this.categoryAddRequest.isShelf = false
+          this.categoryAddRequest.isVoltage = false
         }
       },
       'categoryAddRequest.isInstallation': function(newVal) {
         if (newVal){
           this.categoryAddRequest.isMainCate = false
           this.categoryAddRequest.isShelf = false
+          this.categoryAddRequest.isVoltage = false
         }
       },
       'categoryAddRequest.isShelf': function(newVal) {
         if (newVal){
           this.categoryAddRequest.isMainCate = false
           this.categoryAddRequest.isInstallation = false
+          this.categoryAddRequest.isVoltage = false
         }
       },
+      'categoryAddRequest.isVoltage': function(newVal) {
+        if (newVal){
+          this.categoryAddRequest.isMainCate = false
+          this.categoryAddRequest.isInstallation = false
+          this.categoryAddRequest.isShelf = false
+        }
+      }
     }
   }
 </script>

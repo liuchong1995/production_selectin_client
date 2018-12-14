@@ -60,5 +60,21 @@ export function addComp(data) {
     data
   })
 }
+
+export function updateComponent(data) {
+  return request({
+    url: `/component/update/${data.compId}`,
+    method: 'post',
+    data: data.updateRequest
+  })
+}
+
+export function getComponentToShow(compId) {
+  return request({
+    url: `/component/getComponentToShow/${compId}`,
+    method: 'get'
+  })
+}
+
 export const uploadUrl = 'http://localhost:8888/photo/wangEditorUpload'
 export const compImgUploadUrl = 'http://localhost:8888/component/uploadFile'
