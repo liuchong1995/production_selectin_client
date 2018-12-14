@@ -22,6 +22,13 @@ export function getComponent(compId) {
   })
 }
 
+export function getComponentByLastCate(cateId) {
+  return request({
+    url: `/component/findComponents/${cateId}`,
+    method: 'get'
+  })
+}
+
 export function hasAttachment(data) {
   return request({
     url: `/component/hasAttachment`,
