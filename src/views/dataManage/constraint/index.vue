@@ -1,20 +1,40 @@
 <template>
-  <div style="padding:30px;">
-    <keep-alive :include="cachedViews">
-      <router-view :key="key"/>
-    </keep-alive>
+  <div class="tab-container">
+    <el-tabs v-model="activeName" style="margin-top:15px;" type="border-card">
+      <el-tab-pane label="普通约束"  name="commonConstraint">
+        <keep-alive>
+          <common-constraint></common-constraint>
+        </keep-alive>
+      </el-tab-pane>
+      <el-tab-pane label="架子约束" name="shelfConstraint">
+        <keep-alive>
+          <shelf-constraint></shelf-constraint>
+        </keep-alive>
+      </el-tab-pane>
+    </el-tabs>
   </div>
 </template>
+
 <script>
+  import commonConstraint from './commonConstraint'
+  import shelfConstraint from './shelfConstraint'
+
   export default {
     name: 'constraint',
-    computed: {
-      cachedViews() {
-        return this.$store.state.tagsView.cachedViews
-      },
-      key() {
-        return this.$route.fullPath
+    components: {
+      commonConstraint,
+      shelfConstraint
+    },
+    data() {
+      return {
+        activeName: 'commonConstraint'
       }
     }
   }
 </script>
+
+<style scoped>
+  .tab-container {
+    margin: 30px;
+  }
+</style>

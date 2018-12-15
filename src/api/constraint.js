@@ -23,11 +23,25 @@ export function search(data) {
   })
 }
 
-
 export function addShelfConstraint(data) {
   return request({
     url: `/constraint/shelfConstraint/`,
     method: 'post',
     data
+  })
+}
+
+export function insertConstraint(data) {
+  return request({
+    url: `/constraint/`,
+    method: 'post',
+    data
+  })
+}
+
+export function getMaxGroupId() {
+  return request({
+    url: `/constraint/maxGroupId`,
+    method: 'get',
   })
 }

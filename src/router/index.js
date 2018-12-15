@@ -124,16 +124,10 @@ export const asyncRouterMap = [
     },
     children: [
       {
-        path: 'commonConstraint',
-        component: () => import('@/views/dataManage/constraint/commonConstraint'),
-        name: 'commonConstraint',
-        meta: { title: '普通约束', icon: 'new'}
-      },
-      {
-        path: 'shelfConstraint',
-        component: () => import('@/views/dataManage/constraint/shelfConstraint'),
-        name: 'shelfConstraint',
-        meta: { title: '架子约束', icon: 'shelf'}
+        path: 'constraint',
+        component: () => import('@/views/dataManage/constraint'),
+        name: 'constraint',
+        meta: { title: '增加约束', icon: 'new', noCache: true}
       },
       {
         path: 'constraintManage',

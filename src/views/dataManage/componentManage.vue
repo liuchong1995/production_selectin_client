@@ -107,6 +107,8 @@
     },
     methods: {
       async getList() {
+        await setTimeout(() => {
+        }, 10000)
         this.compSearchRequest.page = this.listQuery.page
         this.compSearchRequest.rows = this.listQuery.limit
         this.compListData = await search(this.compSearchRequest)

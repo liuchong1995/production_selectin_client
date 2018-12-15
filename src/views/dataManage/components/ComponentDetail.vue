@@ -261,7 +261,7 @@
         this.editor = new E(this.$refs.toolbar, this.$refs.editor)
         this.editor.customConfig.uploadImgServer = uploadUrl
         this.editor.customConfig.uploadFileName = 'photoList'
-        this.editor.customConfig.uploadImgMaxSize = 10 * 1024 * 1024
+        this.editor.customConfig.uploadImgMaxSize = 50 * 1024 * 1024
         this.editor.customConfig.uploadImgMaxLength = 5
         this.editor.customConfig.menus = [
           'head', // 标题

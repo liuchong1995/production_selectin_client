@@ -116,7 +116,7 @@
         forthCategory: undefined,
 
         constraintListData: {
-          total: 0
+          total: 1
         },
         //分页配置
         listQuery: {
@@ -149,6 +149,8 @@
       },
       async getList() {
         //重新加载列表 数据
+        await setTimeout(() => {
+        }, 10000)
         this.constraintSearchRequest.categoryIds = []
         //切换页码
         this.constraintSearchRequest.page = this.listQuery.page

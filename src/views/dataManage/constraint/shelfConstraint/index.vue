@@ -1,7 +1,7 @@
 <template>
   <el-form :model="shelfConstraintRequest" label-width="80px" style="padding: 30px;">
     <el-form-item label="产品类型">
-      <el-select v-model="shelfConstraintRequest.productId" placeholder="请选择产品类型">
+      <el-select v-model="shelfConstraintRequest.productId" placeholder="请选择产品类型" style="width: 300px">
         <el-option v-for="(product,index) in productList" :key="index" :value="product.productId"
                    :label="product.productName"></el-option>
       </el-select>
