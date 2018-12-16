@@ -160,6 +160,12 @@ export const asyncRouterMap = [
         name: 'categoryManage',
         component: () => import('@/views/dataManage/categoryManage'),
         meta: { title: '类别管理', icon: 'category' }
+      },
+      {
+        path: 'productManage',
+        name: 'productManage',
+        component: () => import('@/views/dataManage/productManage'),
+        meta: { title: '产品管理', icon: 'product' }
       }
     ]
   },
