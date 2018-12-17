@@ -94,7 +94,7 @@ export const asyncRouterMap = [
         name: 'editOrder',
         hidden: true,
         component: () => import('@/views/productSelection/edit'),
-        meta: { title: '修改选型'}
+        meta: { title: '修改选型' }
       },
       {
         path: 'fork/:orderId(\\d+)',
@@ -120,6 +120,7 @@ export const asyncRouterMap = [
     alwaysShow: true,
     meta: {
       title: '数据维护',
+      roles: ['admin', 'manager'],
       icon: 'data'
     },
     children: [
@@ -127,7 +128,7 @@ export const asyncRouterMap = [
         path: 'constraint',
         component: () => import('@/views/dataManage/constraint'),
         name: 'constraint',
-        meta: { title: '增加约束', icon: 'new', noCache: true}
+        meta: { title: '增加约束', icon: 'new', noCache: true }
       },
       {
         path: 'constraintManage',
@@ -139,7 +140,7 @@ export const asyncRouterMap = [
         path: 'componentManage',
         name: 'componentManage',
         component: () => import('@/views/dataManage/componentManage'),
-        meta: { title: '部件管理', icon: 'component' },
+        meta: { title: '部件管理', icon: 'component' }
       },
       {
         path: 'componentAdd',
@@ -175,7 +176,7 @@ export const asyncRouterMap = [
     redirect: '/user/userManage',
     name: 'user',
     alwaysShow: true,
-    meta: { title: '用户', icon: 'user' },
+    meta: { title: '用户', roles: ['admin'], icon: 'user' },
     children: [
       {
         path: 'userManage',

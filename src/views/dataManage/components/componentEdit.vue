@@ -10,7 +10,3 @@
     components: { ComponentDetail }
   }
 </script>
-
-<style scoped>
-
-</style>
