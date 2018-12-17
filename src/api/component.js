@@ -83,5 +83,7 @@ export function getComponentToShow(compId) {
   })
 }
 
-export const uploadUrl = 'http://localhost:8888/photo/wangEditorUpload'
-export const compImgUploadUrl = 'http://localhost:8888/component/uploadFile'
+const uploadUrl = process.env.NODE_ENV === 'production' ? '/photo/wangEditorUpload' : 'http://localhost:8888/photo/wangEditorUpload'
+const compImgUploadUrl = process.env.NODE_ENV === 'production' ? '/component/uploadFile' : 'http://localhost:8888/component/uploadFile'
+
+export {uploadUrl,compImgUploadUrl}
