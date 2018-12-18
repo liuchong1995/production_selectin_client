@@ -64,7 +64,7 @@
           <div class="component-item">
             <el-tooltip class="item" effect="light" :content="comp.componentReamrk" placement="top-start"
                         :open-delay="300">
-              <pan-thumb width="230px" height="240px"
+              <pan-thumb width="240px" height="250px"
                          :image="comp.componentImage" @click.native="showDetailDialog(comp)">
               </pan-thumb>
             </el-tooltip>
