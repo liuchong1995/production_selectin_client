@@ -128,7 +128,7 @@ export const asyncRouterMap = [
         path: 'constraint',
         component: () => import('@/views/dataManage/constraint'),
         name: 'constraint',
-        meta: { title: '增加约束', icon: 'new', noCache: true }
+        meta: { title: '增加约束', icon: 'new' }
       },
       {
         path: 'constraintManage',

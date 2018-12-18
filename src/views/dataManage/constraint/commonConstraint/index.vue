@@ -210,40 +210,17 @@
       }
     },
     methods: {
-      resetData() {
-        this.constraintRequest = {
-          productId: undefined,
-          constraintPremise: {
-            categories: [],
-            components: []
-          },
-          constraintOperation: 1,
-          constraintResult: {
-            categories: [],
-            components: []
-          },
-          groupId: undefined,
-          groupName: undefined,
-          constraintDesc: ''
-        }
-      },
       async initPage() {
         [this.productList, this.constraintRequest.groupId] = await Promise.all([fetchList(), getMaxGroupId()])
       },
       uniqueArray(arr) {
         return arr.filter((item, index, array) => array.indexOf(item) === index)
       },
-
       isEmptyObject(obj) {
         for (let key in obj) {
           return false//返回false，不为空对象
         }
         return true//返回true，为空对象
-      },
-      deleteObject(obj) {
-        for (let key in obj) {
-          delete obj[key]
-        }
       },
       addPremiseOrResult(premiseOrResultList, premiseOrResult) {
         if (premiseOrResultList.indexOf(premiseOrResult) === -1) {
@@ -256,6 +233,10 @@
         premiseOrResultList.splice(index, 1)
       },
       async saveConstraint() {
+        this.constraintRequest.constraintPremise.categories = []
+        this.constraintRequest.constraintPremise.components = []
+        this.constraintRequest.constraintResult.categories = []
+        this.constraintRequest.constraintResult.components = []
         for (let i in this.currentPremiseList) {
           if (this.currentPremiseList[i].categoryId) {
             this.constraintRequest.constraintPremise.categories.push(this.currentPremiseList[i])
@@ -310,15 +291,14 @@
           this.constraintRequest.constraintDesc = this.constraintRequest.constraintDesc ? this.constraintRequest.constraintDesc : ''
           await insertConstraint(this.constraintRequest)
           this.$message('保存约束成功！')
-          this.$router.replace('/redirect/data/constraint')
           this.$message({
             type: 'success',
             message: '新增成功!'
           })
         })
-
       }
     },
+    //是一个要命的watch真的优化不动了
     watch: {
       'constraintRequest.productId': async function(newVal) {
         if (newVal) {
@@ -327,8 +307,24 @@
             parentId: 0
           }
           this.firstCategoryList = await getOneLevelCategory(query)
+        } else {
+          this.firstCategoryList = []
         }
-        this.deleteObject(this.currentPremise.firstCategory)
+        //清空各种分类
+        this.secondCategoryList = []
+        this.thirdCategoryList = []
+        this.forthCategoryList = []
+        this.componentList = []
+        this.secondCategoryResultList = []
+        this.thirdCategoryResultList = []
+        this.forthCategoryResultList = []
+        this.componentResultList = []
+        //清空当前与选择前提and结果
+        this.currentPremise = {}
+        this.currentResult = {}
+        //清空当前与选择结果前提项and结果项
+        this.currentSelectedPremise = {}
+        this.currentSelectedResult = {}
       },
 
       'currentPremise.firstCategory.categoryId': async function(newVal) {
@@ -339,13 +335,27 @@
               parentId: newVal
             }
             this.secondCategoryList = await getOneLevelCategory(query)
+            this.componentList = []
           } else {
+            this.secondCategoryList = []
             this.componentList = await getComponentByLastCate(newVal)
           }
           this.currentSelectedPremise = this.currentPremise.firstCategory
         }
-        this.deleteObject(this.currentPremise.secondCategory)
-
+        this.thirdCategoryList = []
+        this.forthCategoryList = []
+        if (this.currentPremise.secondCategory) {
+          this.currentPremise.secondCategory = {}
+        }
+        if (this.currentPremise.thirdCategory) {
+          this.currentPremise.thirdCategory = {}
+        }
+        if (this.currentPremise.forthCategory) {
+          this.currentPremise.forthCategory = {}
+        }
+        if (this.currentPremise.component) {
+          this.currentPremise.component = {}
+        }
       },
 
       'currentPremise.secondCategory.categoryId': async function(newVal) {
@@ -356,13 +366,23 @@
               parentId: newVal
             }
             this.thirdCategoryList = await getOneLevelCategory(query)
+            this.componentList = []
           } else {
+            this.thirdCategoryList = []
             this.componentList = await getComponentByLastCate(newVal)
           }
           this.currentSelectedPremise = this.currentPremise.secondCategory
         }
-        this.deleteObject(this.currentPremise.thirdCategory)
-
+        this.forthCategoryList = []
+        if (this.currentPremise.thirdCategory) {
+          this.currentPremise.thirdCategory = {}
+        }
+        if (this.currentPremise.forthCategory) {
+          this.currentPremise.forthCategory = {}
+        }
+        if (this.currentPremise.component) {
+          this.currentPremise.component = {}
+        }
       },
 
       'currentPremise.thirdCategory.categoryId': async function(newVal) {
@@ -373,12 +393,19 @@
               parentId: newVal
             }
             this.forthCategoryList = await getOneLevelCategory(query)
+            this.componentList = []
           } else {
+            this.forthCategoryList = []
             this.componentList = await getComponentByLastCate(newVal)
           }
           this.currentSelectedPremise = this.currentPremise.thirdCategory
         }
-        this.deleteObject(this.currentPremise.forthCategory)
+        if (this.currentPremise.forthCategory) {
+          this.currentPremise.forthCategory = {}
+        }
+        if (this.currentPremise.component) {
+          this.currentPremise.component = {}
+        }
       },
 
       'currentPremise.forthCategory.categoryId': async function(newVal) {
@@ -386,7 +413,9 @@
           this.componentList = await getComponentByLastCate(newVal)
           this.currentSelectedPremise = this.currentPremise.forthCategory
         }
-        this.deleteObject(this.currentPremise.component)
+        if (this.currentPremise.component) {
+          this.currentPremise.component = {}
+        }
       },
 
       'currentPremise.component.componentId': async function(newVal) {
@@ -404,30 +433,54 @@
               parentId: newVal
             }
             this.secondCategoryResultList = await getOneLevelCategory(query)
+            this.componentResultList = []
           } else {
+            this.secondCategoryResultList = []
             this.componentResultList = await getComponentByLastCate(newVal)
           }
           this.currentSelectedResult = this.currentResult.firstCategory
         }
-        this.deleteObject(this.currentResult.secondCategory)
+        this.thirdCategoryResultList = []
+        this.forthCategoryResultList = []
+        if (this.currentResult.secondCategory) {
+          this.currentResult.secondCategory = {}
+        }
+        if (this.currentResult.thirdCategory) {
+          this.currentResult.thirdCategory = {}
+        }
+        if (this.currentResult.forthCategory) {
+          this.currentResult.forthCategory = {}
+        }
+        if (this.currentResult.component) {
+          this.currentResult.component = {}
+        }
       },
 
       'currentResult.secondCategory.categoryId': async function(newVal) {
         if (newVal) {
-
           if (!this.currentResult.secondCategory.isLeaf) {
             const query = {
               productId: this.constraintRequest.productId,
               parentId: newVal
             }
             this.thirdCategoryResultList = await getOneLevelCategory(query)
+            this.componentResultList = []
           } else {
+            this.thirdCategoryResultList = []
             this.componentResultList = await getComponentByLastCate(newVal)
           }
-
           this.currentSelectedResult = this.currentResult.secondCategory
         }
-        this.deleteObject(this.currentResult.thirdCategory)
+        this.forthCategoryResultList = []
+        if (this.currentResult.thirdCategory) {
+          this.currentResult.thirdCategory = {}
+        }
+        if (this.currentResult.forthCategory) {
+          this.currentResult.forthCategory = {}
+        }
+        if (this.currentResult.component) {
+          this.currentResult.component = {}
+        }
       },
 
       'currentResult.thirdCategory.categoryId': async function(newVal) {
@@ -438,12 +491,19 @@
               parentId: newVal
             }
             this.forthCategoryResultList = await getOneLevelCategory(query)
+            this.componentResultList = []
           } else {
+            this.forthCategoryResultList = []
             this.componentResultList = await getComponentByLastCate(newVal)
           }
           this.currentSelectedResult = this.currentResult.thirdCategory
         }
-        this.deleteObject(this.currentResult.forthCategory)
+        if (this.currentResult.forthCategory) {
+          this.currentResult.forthCategory = {}
+        }
+        if (this.currentResult.component) {
+          this.currentResult.component = {}
+        }
       },
 
       'currentResult.forthCategory.categoryId': async function(newVal) {
@@ -451,7 +511,9 @@
           this.componentResultList = await getComponentByLastCate(newVal)
           this.currentSelectedResult = this.currentResult.forthCategory
         }
-        this.deleteObject(this.currentResult.component)
+        if (this.currentResult.component) {
+          this.currentResult.component = {}
+        }
       },
 
       'currentResult.component.componentId': async function(newVal) {

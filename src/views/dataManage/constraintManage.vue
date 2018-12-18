@@ -64,6 +64,11 @@
           <span>{{ productShowList[scope.row.productId] }}</span>
         </template>
       </el-table-column>
+      <el-table-column label="约束组号" align="center" width="150px">
+        <template slot-scope="scope">
+          <span>{{ scope.row.groupId }}</span>
+        </template>
+      </el-table-column>
       <el-table-column label="约束组名" align="center" width="250px">
         <template slot-scope="scope">
           <span>{{ scope.row.groupName }}</span>
