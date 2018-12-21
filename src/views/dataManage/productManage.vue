@@ -34,7 +34,7 @@
     <el-dialog title="新增产品" :visible.sync="dialogFormVisible" width="1000px">
       <el-form :model="productAddRequest">
         <el-form-item label="产品名称" :label-width="formLabelWidth">
-          <el-input v-model="productAddRequest.productName" auto-complete="off" placeholder="分类名称"></el-input>
+          <el-input v-model="productAddRequest.productName" auto-complete="off" placeholder="分类名称" style="width: 400px"></el-input>
         </el-form-item>
         <el-form-item label="选型项数" :label-width="formLabelWidth">
           <el-input-number v-model="choiceItems" :min="1" :max="100" label="选型项数"></el-input-number>
@@ -157,6 +157,14 @@
         this.dialogFormVisible = true
       },
       addProd() {
+        const checkRes = this.checkSubSection()
+        if (!checkRes){
+          this.$message({
+            type: 'error',
+            message: '产品信息输入错误或分段不符合规则!'
+          })
+          return
+        }
         let tempSegmentation = []
         for (const subSection of this.subSectionRanges) {
           tempSegmentation.push(subSection.range[1])
@@ -176,9 +184,22 @@
           })
         })
       },
+      checkSubSection() {
+        if (this.subSectionRanges[0].range[0] !== 1
+          || this.subSectionRanges[this.subSectionCount - 1].range[1] !== this.choiceItems) {
+          return false
+        }
+        for (let i = 0; i < this.subSectionCount - 1; i++) {
+          if (this.subSectionRanges[i].range[1] !== this.subSectionRanges[i + 1].range[0] - 1) {
+            return false
+          }
+        }
+        return !(!this.imageUrl || !this.productAddRequest.productName || !this.productAddRequest.productName.trim());
+
+      },
       async removeProd(prod) {
         const res = await canBeDelete(prod.productId)
-        if (res.length > 0){
+        if (res.length > 0) {
           this.$message('该产品下还有分类，无法删除！')
         } else {
           this.$confirm('您确定删除这个产品么, 是否继续?', '提示', {

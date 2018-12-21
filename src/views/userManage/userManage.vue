@@ -2,7 +2,9 @@
   <div class="app-container">
 
     <div class="filter-container" style="padding-bottom: 10px">
-      <el-button class="filter-item" type="primary" size="small" icon="el-icon-plus" @click=" dialogFormVisible = true">新增用户</el-button>
+      <el-button class="filter-item" type="primary" size="small" icon="el-icon-plus" @click=" dialogFormVisible = true">
+        新增用户
+      </el-button>
     </div>
 
     <el-table
@@ -62,7 +64,8 @@
         </el-form-item>
         <el-form-item label="角色" :label-width="formLabelWidth">
           <el-select v-model="userEntity.roles" placeholder="请选择角色">
-            <el-option :label="role.roleChineseName" :value="role.roleId" v-for="role in allRoles" :key="role.roleId"></el-option>
+            <el-option :label="role.roleChineseName" :value="role.roleId" v-for="role in allRoles"
+                       :key="role.roleId"></el-option>
           </el-select>
         </el-form-item>
       </el-form>
@@ -76,14 +79,16 @@
 
 <script>
   import Pagination from '@/components/Pagination'
-  import { searchUsers, getAllRoles, banOrDebanUser, deleteUser,saveUser } from '@/api/user'
+  import { searchUsers, getAllRoles, banOrDebanUser, deleteUser, saveUser } from '@/api/user'
 
   export default {
     name: 'userManage',
     components: { Pagination },
     data() {
       return {
-        allUser: {},
+        allUser: {
+          total: 1
+        },
         allRoles: [],
         listQuery: {
           page: 1,
@@ -126,7 +131,7 @@
       parseRoles(roles) {
         return this.allRoles.find(ele => ele.roleId === JSON.parse(roles)[0]).roleChineseName
       },
-      async addUser(){
+      async addUser() {
         let roles = []
         roles.push(this.userEntity.roles)
         this.userEntity.roles = JSON.stringify(roles)
