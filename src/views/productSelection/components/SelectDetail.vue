@@ -304,8 +304,7 @@
           this.$message('同一种类型组件只能选一种，请删除相应组件后再选择')
           return
         }
-        const selectCategory = await getCategory(comp.firstCategoryId)
-        if (selectCategory.categoryProperties) {
+        if (comp.firstCategoryId === this.currentProduct.shelfId) {
           if (this.hasInstallation().size === 0) {
             this.$message('选择架子组件前请先选择安装方式！')
             return
