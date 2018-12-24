@@ -3,7 +3,7 @@
     <el-dialog
       :title="currentComponentDetail.componentModelNumber"
       :visible.sync="centerDialogVisible"
-      width="80%"
+      fullscreen
       center>
       <span v-html="currentComponentDetail.componentDetail"></span>
       <span slot="footer" class="dialog-footer">

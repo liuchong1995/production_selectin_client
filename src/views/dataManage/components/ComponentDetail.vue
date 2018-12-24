@@ -202,7 +202,10 @@
               this.componentAddRequest.categoryIds.push(this.forthCategoryId)
             }
             this.componentAddRequest.componentDetail = this.editor.txt.html()
-
+            const replaceStr = "style=\"max-width:100%;\""
+            const replacedStr = "width:100% height:100%"
+            this.componentAddRequest.componentDetail = this.componentAddRequest.componentDetail.replace(replaceStr,replacedStr)
+            debugger
             let result = await this.checkForm()
             if (result.code !== 200) {
               this.$message(result.msg)
@@ -277,6 +280,7 @@
           'redo' // 重复
         ]
         // 创建富文本编辑器
+        this.editor.customConfig.zIndex = 1
         this.editor.create()
       },
       async loadPageData() {
@@ -403,7 +407,7 @@
   }
 
   .editor {
-    width: 80%;
+    width: 100%;
     margin: 0;
   }
 
@@ -413,6 +417,6 @@
 
   .text {
     border: 1px solid #ccc;
-    height: 200px;
+    height: 600px;
   }
 </style>
