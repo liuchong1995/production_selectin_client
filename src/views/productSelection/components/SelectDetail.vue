@@ -139,7 +139,7 @@
   import { getAllHeight, getAllInstallation, getAllMountHeight, getShelfConstraint } from '@/api/shelf'
   import { getOptionalListByCateId, getOptionalListBySelected, getComponent, hasAttachment } from '@/api/component'
   import { generateModelNumber, getMandatoryResult, saveOrder, getOrder, updateOrder } from '@/api/order'
-  import { fetchOne} from '@/api/product'
+  import { fetchOne } from '@/api/product'
   import PanThumb from '@/components/PanThumb/index'
 
   export default {
@@ -249,7 +249,7 @@
         let tempSelectedList = [...this.selectedList]
         let tempSelectedTypeList = [...this.selectedTypeList]
         //如果删除架子这把安装高度和架子高度清空
-        if (component.firstCategoryId === this.currentProduct.shelfId){
+        if (component.firstCategoryId === this.currentProduct.shelfId) {
           this.orderEntity.mountHeight = undefined
           this.orderEntity.shelfHeight = undefined
         }
@@ -477,7 +477,7 @@
         }
       },
       'orderEntity.shelfHeight': function(newValue) {
-        if (newValue&& this.enableWatchShelfHeight) {
+        if (newValue && this.enableWatchShelfHeight) {
           let ShelfConstraintInstallId = this.getShelfConstraintInstallId()
           if (ShelfConstraintInstallId.length > 0) {
             let currentConstraint = this.allShelfConstraint.filter(ele => ele.installation === ShelfConstraintInstallId[0])

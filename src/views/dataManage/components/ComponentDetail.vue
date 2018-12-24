@@ -202,10 +202,11 @@
               this.componentAddRequest.categoryIds.push(this.forthCategoryId)
             }
             this.componentAddRequest.componentDetail = this.editor.txt.html()
-            const replaceStr = "style=\"max-width:100%;\""
+            const replaceStr1 = /\bstyle="max-width:100%;"/g
+            const replaceStr2 = /\bstyle="max-width: 100%;"/g
             const replacedStr = "width:100% height:100%"
-            this.componentAddRequest.componentDetail = this.componentAddRequest.componentDetail.replace(replaceStr,replacedStr)
-            debugger
+            this.componentAddRequest.componentDetail = this.componentAddRequest.componentDetail.replace(replaceStr1,replacedStr)
+            this.componentAddRequest.componentDetail = this.componentAddRequest.componentDetail.replace(replaceStr2,replacedStr)
             let result = await this.checkForm()
             if (result.code !== 200) {
               this.$message(result.msg)
