@@ -120,7 +120,7 @@
           const res = await isExit(this.componentAddRequest)
           if (!this.isEdit && res.length > 0) {
             callback(new Error('已存在相同的产品型号'))
-          } else if (this.isEdit && res.length > 1) {
+          } else if ((this.isEdit && res.length > 0 && value !== this.forCheckIsSameName.componentModelNumber)) {
             callback(new Error('已存在相同的产品型号'))
           } else {
             callback()
@@ -134,7 +134,7 @@
           const res = await isExit(this.componentAddRequest)
           if (!this.isEdit && res.length > 0) {
             callback(new Error('已存在相同的产品短码'))
-          } else if (this.isEdit && res.length > 1) {
+          } else if (this.isEdit && res.length > 0 && value !== this.forCheckIsSameName.componentShortNumber) {
             callback(new Error('已存在相同的产品短码'))
           } else {
             callback()
@@ -168,7 +168,8 @@
           componentModelNumber: [{ validator: validateComponentModelNumber, trigger: 'blur' }],
           componentShortNumber: [{ validator: validateComponentShortNumber, trigger: 'blur' }]
         },
-        firstComeThisPage: true
+        firstComeThisPage: true,
+        forCheckIsSameName: {}
       }
     },
     mounted() {
@@ -204,9 +205,9 @@
             this.componentAddRequest.componentDetail = this.editor.txt.html()
             const replaceStr1 = /\bstyle="max-width:100%;"/g
             const replaceStr2 = /\bstyle="max-width: 100%;"/g
-            const replacedStr = "width:100% height:100%"
-            this.componentAddRequest.componentDetail = this.componentAddRequest.componentDetail.replace(replaceStr1,replacedStr)
-            this.componentAddRequest.componentDetail = this.componentAddRequest.componentDetail.replace(replaceStr2,replacedStr)
+            const replacedStr = 'width:100% height:100%'
+            this.componentAddRequest.componentDetail = this.componentAddRequest.componentDetail.replace(replaceStr1, replacedStr)
+            this.componentAddRequest.componentDetail = this.componentAddRequest.componentDetail.replace(replaceStr2, replacedStr)
             let result = await this.checkForm()
             if (result.code !== 200) {
               this.$message(result.msg)
@@ -241,6 +242,7 @@
         this.componentId = this.$route.params && this.$route.params.compId;
         [this.componentAddRequest, this.productList] = await Promise.all([getComponentToShow(this.componentId), fetchList()])
         this.imageUrl = this.componentAddRequest.componentImage
+        this.forCheckIsSameName = Object.assign({},Object.create(Object.getPrototypeOf(this.componentAddRequest)),this.componentAddRequest)
         this.editor.txt.html(this.componentAddRequest.componentDetail);
         [this.firstCategoryId, this.secondCategoryId = undefined, this.thirdCategoryId = undefined, this.forthCategoryId = undefined]
           = this.componentAddRequest.categoryIds
