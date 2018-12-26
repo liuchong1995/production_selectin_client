@@ -9,7 +9,7 @@
       </el-select>
       <el-input v-model="orderSearchRequest.costumer" placeholder="客户名称" style="width: 250px;" class="filter-item"
                 size="small"/>
-      <el-input v-model="orderSearchRequest.endUser" placeholder="最终用户" style="width: 250px;" class="filter-item"
+      <el-input v-model="orderSearchRequest.endUser" placeholder="最终用户及项目号" style="width: 250px;" class="filter-item"
                 size="small"/>
       <el-select v-model="orderSearchRequest.creator" placeholder="制单人" clearable style="width: 100px" size="small"
                  class="filter-item">

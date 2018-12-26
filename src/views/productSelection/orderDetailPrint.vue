@@ -28,7 +28,7 @@
           </el-form-item>
         </el-col>
         <el-col :span="4" style="height: 63px">
-          <el-form-item label="最终用户:" style="font-size: 18px">
+          <el-form-item label="最终用户及项目号:" style="font-size: 18px">
             <span style="font-size: 18px">{{orderDetail.order.endUser}}</span>
           </el-form-item>
         </el-col>

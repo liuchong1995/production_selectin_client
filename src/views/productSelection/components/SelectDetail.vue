@@ -45,8 +45,8 @@
                 <el-input v-model="orderEntity.customer" style="width: 200px" size="small"
                           placeholder="客户名称"></el-input>
               </el-form-item>
-              <el-form-item label="最终用户">
-                <el-input v-model="orderEntity.endUser" style="width: 200px" size="small" placeholder="最终用户"></el-input>
+              <el-form-item label="最终用户及项目号">
+                <el-input v-model="orderEntity.endUser" style="width: 200px" size="small" placeholder="最终用户及项目号"></el-input>
               </el-form-item>
               <el-form-item>
                 <el-button type="success" size="small" @click="saveOrder">保存</el-button>
