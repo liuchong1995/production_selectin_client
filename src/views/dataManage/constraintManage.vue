@@ -13,19 +13,19 @@
         <el-option :value="category" :label="category.categoryName"
                    v-for="category in firstCategoryList" :key="category.categoryId"></el-option>
       </el-select>
-      <el-select v-show="firstCategory && !firstCategory.isLeaf" value-key="categoryId" v-model="secondCategory" placeholder="二级分类" clearable style="width: 200px"
+      <el-select v-show="Object.keys(firstCategory).length > 0 && !firstCategory.isLeaf" value-key="categoryId" v-model="secondCategory" placeholder="二级分类" clearable style="width: 200px"
                  size="small"
                  class="filter-item">
         <el-option :value="category" :label="category.categoryName"
                    v-for="category in secondCategoryList" :key="category.categoryId"></el-option>
       </el-select>
-      <el-select v-show="secondCategory && !secondCategory.isLeaf" value-key="categoryId" v-model="thirdCategory" placeholder="三级分类" clearable style="width: 200px"
+      <el-select v-show="Object.keys(secondCategory).length > 0 && !secondCategory.isLeaf" value-key="categoryId" v-model="thirdCategory" placeholder="三级分类" clearable style="width: 200px"
                  size="small"
                  class="filter-item">
         <el-option :value="category" :label="category.categoryName"
                    v-for="category in thirdCategoryList" :key="category.categoryId"></el-option>
       </el-select>
-      <el-select v-show="thirdCategory && !thirdCategory.isLeaf" value-key="categoryId"  v-model="forthCategory" placeholder="四级分类" clearable style="width: 200px"
+      <el-select v-show="Object.keys(thirdCategory).length > 0 && !thirdCategory.isLeaf" value-key="categoryId"  v-model="forthCategory" placeholder="四级分类" clearable style="width: 200px"
                  size="small"
                  class="filter-item">
         <el-option :value="category" :label="category.categoryName"
@@ -49,7 +49,7 @@
       fit
       highlight-current-row
       style="width: 100%;">
-      <el-table-column label="是否删除" prop="id" align="center" width="150px">
+      <el-table-column label="是否删除" prop="id" align="center" width="80px">
         <template slot-scope="scope">
           <el-switch
             @change="handleDelIds(scope.row)"
@@ -59,27 +59,27 @@
           </el-switch>
         </template>
       </el-table-column>
-      <el-table-column label="约束所在产品" prop="id" align="center" width="280px">
+      <el-table-column label="约束所在产品" prop="id" align="center" width="220px">
         <template slot-scope="scope">
           <span>{{ productShowList[scope.row.productId] }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="约束组号" align="center" width="150px">
+      <el-table-column label="约束组号" align="center" width="100px">
         <template slot-scope="scope">
           <span>{{ scope.row.groupId }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="约束组名" align="center" width="250px">
+      <el-table-column label="约束组名" align="center" width="180px">
         <template slot-scope="scope">
           <span>{{ scope.row.groupName }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="约束描述" align="center" width="600px">
+      <el-table-column label="约束描述" align="center" width="1000px">
         <template slot-scope="scope">
           <span>{{ scope.row.constraintDesc }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="操作" align="center" width="120px" class-name="small-padding fixed-width"
+      <el-table-column label="操作" align="center" width="100px" class-name="small-padding fixed-width"
                        style="padding-left: 0;padding-right: 0">
         <template slot-scope="scope" style="margin-left: 0;margin-right: 0">
           <el-button size="mini" type="danger"
@@ -115,10 +115,10 @@
         thirdCategoryList: [],
         forthCategoryList: [],
         componentList: [],
-        firstCategory: undefined,
-        secondCategory: undefined,
-        thirdCategory: undefined,
-        forthCategory: undefined,
+        firstCategory: {},
+        secondCategory: {},
+        thirdCategory: {},
+        forthCategory: {},
 
         constraintListData: {
           total: 1
@@ -161,19 +161,17 @@
         this.constraintSearchRequest.page = this.listQuery.page
         this.constraintSearchRequest.rows = this.listQuery.limit
         this.constraintSearchRequest.productId = this.currentProductId
-        if (this.currentComponentId) {
-          this.constraintSearchRequest.componentId = this.currentComponentId
-        }
-        if (this.firstCategory) {
+        this.constraintSearchRequest.componentId = this.currentComponentId
+        if (Object.keys(this.firstCategory).length > 0) {
           this.constraintSearchRequest.categoryIds.push(this.firstCategory.categoryId)
         }
-        if (this.secondCategory) {
+        if (Object.keys(this.secondCategory).length > 0) {
           this.constraintSearchRequest.categoryIds.push(this.secondCategory.categoryId)
         }
-        if (this.thirdCategory) {
+        if (Object.keys(this.thirdCategory).length > 0) {
           this.constraintSearchRequest.categoryIds.push(this.thirdCategory.categoryId)
         }
-        if (this.forthCategory) {
+        if (Object.keys(this.forthCategory).length > 0) {
           this.constraintSearchRequest.categoryIds.push(this.forthCategory.categoryId)
         }
         this.constraintListData = await search(this.constraintSearchRequest)
@@ -215,75 +213,6 @@
             message: '删除成功!'
           })
         })
-      },
-      resetData(num){
-        if (num === 6){
-
-          if (this.firstCategory) {
-            this.firstCategory = undefined
-          }
-          if (this.secondCategory) {
-            this.secondCategory = undefined
-          }
-          if (this.thirdCategory) {
-            this.thirdCategory = undefined
-          }
-          if (this.forthCategory) {
-            this.forthCategory = undefined
-          }
-          if (this.currentComponentId) {
-            this.currentComponentId = undefined
-          }
-          if (this.componentList.length > 0) {
-            this.componentList = []
-          }
-        } else if (num === 5){
-          if (this.secondCategory) {
-            this.secondCategory = undefined
-          }
-          if (this.thirdCategory) {
-            this.thirdCategory = undefined
-          }
-          if (this.forthCategory) {
-            this.forthCategory = undefined
-          }
-          if (this.currentComponentId) {
-            this.currentComponentId = undefined
-          }
-          if (this.componentList.length > 0) {
-            this.componentList = []
-          }
-        } else if (num === 4){
-          if (this.thirdCategory) {
-            this.thirdCategory = undefined
-          }
-          if (this.forthCategory) {
-            this.forthCategory = undefined
-          }
-          if (this.componentList.length > 0) {
-            this.componentList = []
-          }
-          if (this.currentComponentId) {
-            this.currentComponentId = undefined
-          }
-          if (this.componentList.length > 0) {
-            this.componentList = []
-          }
-        } else if (num === 3){
-          if (this.forthCategory) {
-            this.forthCategory = undefined
-          }
-          if (this.currentComponentId) {
-            this.currentComponentId = undefined
-          }
-          if (this.componentList.length > 0) {
-            this.componentList = []
-          }
-        } else if (num === 1){
-          if (this.currentComponentId) {
-            this.currentComponentId = undefined
-          }
-        }
       }
     },
     watch: {
@@ -295,82 +224,93 @@
           }
           this.firstCategoryList = await getOneLevelCategory(query)
         } else {
-          this.currentProductId = undefined
+          this.firstCategoryList = []
         }
-        this.resetData(6)
+        //清空各种分类
+        this.secondCategoryList = []
+        this.thirdCategoryList = []
+        this.forthCategoryList = []
+        this.componentList = []
+        this.firstCategory = {}
+        this.secondCategory = {}
+        this.thirdCategory = {}
+        this.forthCategory = {}
+        this.currentComponentId = undefined
       },
 
       'firstCategory.categoryId': async function(newVal) {
-        const tempNewVal = newVal
         if (newVal) {
-          if (this.firstCategory.isLeaf) {
-            this.changeComponentList = true
-          } else {
+          if (!this.firstCategory.isLeaf) {
             const query = {
               productId: this.currentProductId,
               parentId: newVal
             }
             this.secondCategoryList = await getOneLevelCategory(query)
+            this.componentList = []
+          } else {
+            this.secondCategoryList = []
+            this.componentList = await getComponentByLastCate(newVal)
           }
+        } else {
+          this.componentList = []
         }
-        this.resetData(5)
-        if (this.changeComponentList){
-          if (tempNewVal){
-            this.componentList = await getComponentByLastCate(tempNewVal)
-          }
-          this.changeComponentList = false
-        }
+        this.thirdCategoryList = []
+        this.forthCategoryList = []
+        this.secondCategory = {}
+        this.thirdCategory = {}
+        this.forthCategory = {}
+        this.currentComponentId = undefined
       },
 
       'secondCategory.categoryId': async function(newVal) {
-        const tempNewVal = newVal
         if (newVal) {
-          if (this.secondCategory.isLeaf) {
-            this.changeComponentList = true
-          } else {
+          if (!this.secondCategory.isLeaf) {
             const query = {
               productId: this.currentProductId,
               parentId: newVal
             }
             this.thirdCategoryList = await getOneLevelCategory(query)
+            this.componentList = []
+          } else {
+            this.thirdCategoryList = []
+            this.componentList = await getComponentByLastCate(newVal)
           }
+        } else {
+          this.componentList = []
         }
-        this.resetData(4)
-        if (this.changeComponentList){
-          if (tempNewVal){
-            this.componentList = await getComponentByLastCate(tempNewVal)
-          }
-          this.changeComponentList = false
-        }
+        this.forthCategoryList = []
+        this.thirdCategory = {}
+        this.forthCategory = {}
+        this.currentComponentId = undefined
       },
 
       'thirdCategory.categoryId': async function(newVal) {
-        const tempNewVal = newVal
         if (newVal) {
-          if (this.thirdCategory.isLeaf) {
-            this.changeComponentList = true
-          } else {
+          if (!this.thirdCategory.isLeaf) {
             const query = {
               productId: this.currentProductId,
               parentId: newVal
             }
             this.forthCategoryList = await getOneLevelCategory(query)
+            this.componentList = []
+          } else {
+            this.forthCategoryList = []
+            this.componentList = await getComponentByLastCate(newVal)
           }
+        } else {
+          this.componentList = []
         }
-        this.resetData(3)
-        if (this.changeComponentList){
-          if (tempNewVal){
-            this.componentList = await getComponentByLastCate(tempNewVal)
-          }
-          this.changeComponentList = false
-        }
+        this.forthCategory = {}
+        this.currentComponentId = undefined
       },
 
       'forthCategory.categoryId': async function(newVal) {
         if (newVal) {
           this.componentList = await getComponentByLastCate(newVal)
+        } else {
+          this.componentList = []
         }
-        this.resetData(1)
+        this.currentComponentId = undefined
       }
     }
   }

@@ -45,7 +45,7 @@
           <span>{{ scope.row.customer }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="最终用户及项目号" align="center" width="150px">
+      <el-table-column label="最终用户及项目号" align="center" width="160px">
         <template slot-scope="scope">
           <span>{{ scope.row.endUser }}</span>
         </template>
