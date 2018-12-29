@@ -2,42 +2,42 @@
     <el-row id="printJS-form" style="padding: 20px" class="customInlineFrom">
       <el-col :span="22" style="font-size: 20px">KYOKUTOH产品选型: {{orderDetail.order.productModel}}</el-col>
       <el-form label-position="left" :inline="true" class="demo-form-inline">
-        <el-col :span="8" style="height: 63px">
+        <el-col :span="6" style="height: 63px">
           <el-form-item label="订单号:" style="font-size: 18px">
             <span style="font-size: 18px">{{orderDetail.order.orderNumber}}</span>
           </el-form-item>
         </el-col>
-        <el-col :span="4" style="height: 63px">
+        <el-col :span="8" style="height: 63px">
           <el-form-item label="制单人:" style="font-size: 18px">
             <span style="font-size: 18px">{{orderDetail.order.creator | parseUserName}}</span>
           </el-form-item>
         </el-col>
-        <el-col :span="6" style="height: 63px">
+        <el-col :span="5" style="height: 63px">
           <el-form-item label="时间:" style="font-size: 18px">
             <span style="font-size: 18px">{{orderDetail.order.updateTime | parseTime('{y}-{m}-{d} {h}:{i}:{s}')}}</span>
           </el-form-item>
         </el-col>
-        <el-col :span="6" style="height: 63px">
+        <el-col :span="5" style="height: 63px">
           <el-form-item label="关联单号:" style="font-size: 18px">
             <span style="font-size: 18px">{{orderDetail.order.relateSellId}}</span>
           </el-form-item>
         </el-col>
-        <el-col :span="8" style="height: 63px">
+        <el-col :span="6" style="height: 63px">
           <el-form-item label="客户:" style="font-size: 18px">
             <span style="font-size: 18px">{{orderDetail.order.customer}}</span>
           </el-form-item>
         </el-col>
-        <el-col :span="4" style="height: 63px">
+        <el-col :span="8" style="height: 63px">
           <el-form-item label="最终用户及项目号:" style="font-size: 18px">
             <span style="font-size: 18px">{{orderDetail.order.endUser}}</span>
           </el-form-item>
         </el-col>
-        <el-col :span="6" style="height: 63px">
+        <el-col :span="5" style="height: 63px">
           <el-form-item label="安装高度:" style="font-size: 18px">
             <span style="font-size: 18px;height: 18px">{{orderDetail.order.mountHeight}}</span>
           </el-form-item>
         </el-col>
-        <el-col :span="6" style="height: 63px">
+        <el-col :span="5" style="height: 63px">
           <el-form-item label="架子高度:" style="font-size: 18px">
             <span style="font-size: 18px;height: 18px">{{orderDetail.order.shelfHeight}}</span>
           </el-form-item>
