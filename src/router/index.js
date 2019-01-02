@@ -115,7 +115,7 @@ export const asyncRouterMap = [
   {
     path: '/data',
     component: Layout,
-    redirect: '/data/constraint/commonConstraint',
+    redirect: '/data/constraint',
     name: 'data',
     alwaysShow: true,
     meta: {
