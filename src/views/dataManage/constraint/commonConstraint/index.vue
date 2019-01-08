@@ -1,141 +1,172 @@
 <template>
   <div>
-    <h3 style="margin: 0;padding-left: 20px">约束前提</h3>
-    <el-form label-width="120px" style="padding: 20px;">
-      <el-form-item label="产品类型">
-        <el-select v-model="constraintRequest.productId" clearable placeholder="请选择产品类型" style="width: 300px">
-          <el-option v-for="(product,index) in productList" :key="index" :value="product.productId"
-                     :label="product.productName"></el-option>
-        </el-select>
-      </el-form-item>
-      <el-form-item label="类型或部件">
-        <el-select v-show="constraintRequest.productId" value-key="categoryId" v-model="currentPremise.firstCategory"
-                   placeholder="一级分类" clearable style="width: 200px" size="small" class="filter-item">
-          <el-option :value="category" :label="category.categoryName"
-                     v-for="category in firstCategoryList" :key="category.categoryId">
-          </el-option>
-        </el-select>
-        <el-select v-show="!isEmptyObject(currentPremise.firstCategory) && !currentPremise.firstCategory.isLeaf"
-                   value-key="categoryId" v-model="currentPremise.secondCategory"
-                   placeholder="二级分类" clearable style="width: 200px" size="small" class="filter-item">
-          <el-option :value="category" :label="category.categoryName"
-                     v-for="category in secondCategoryList" :key="category.categoryId"></el-option>
-        </el-select>
-        <el-select v-show="!isEmptyObject(currentPremise.secondCategory) && !currentPremise.secondCategory.isLeaf"
-                   value-key="categoryId" v-model="currentPremise.thirdCategory"
-                   placeholder="三级分类" clearable style="width: 200px" size="small" class="filter-item">
-          <el-option :value="category" :label="category.categoryName"
-                     v-for="category in thirdCategoryList" :key="category.categoryId"></el-option>
-        </el-select>
-        <el-select v-show="!isEmptyObject(currentPremise.thirdCategory) && !currentPremise.thirdCategory.isLeaf"
-                   value-key="categoryId" v-model="currentPremise.forthCategory"
-                   placeholder="四级分类" clearable style="width: 200px"
-                   size="small"
-                   class="filter-item">
-          <el-option :value="category" :label="category.categoryName"
-                     v-for="category in forthCategoryList" :key="category.categoryId"></el-option>
-        </el-select>
-        <el-select v-show="showPremiseComponent" v-model="currentPremise.component" placeholder="部件" clearable
-                   style="width: 200px"
-                   value-key="componentId"
-                   size="small"
-                   class="filter-item">
-          <el-option :value="component" :label="component.componentModelNumber"
-                     v-for="component in componentList" :key="component.componentId"></el-option>
-        </el-select>
-        <el-button v-show="!isEmptyObject(currentPremise.firstCategory)" class="filter-item" type="info" size="small"
-                   icon="el-icon-check" @click="addPremiseOrResult(currentPremiseList,currentSelectedPremise)">选择
-        </el-button>
-      </el-form-item>
-      <el-form-item label="已选约束前提">
-        <el-tag v-for="(categoryOrComponent,index) in currentPremiseList"
-                :key="index"
-                closable
-                :disable-transitions="false"
-                @close="deletePremiseOrResult(index,currentPremiseList)">
-          {{categoryOrComponent.categoryName || categoryOrComponent.componentModelNumber}}
-        </el-tag>
-      </el-form-item>
-      <el-form-item label="约束类型">
-        <el-radio-group v-model="constraintRequest.constraintOperation" size="small">
-          <el-radio-button :label="1">仅可用于</el-radio-button>
-          <el-radio-button :label="2">互斥</el-radio-button>
-          <el-radio-button :label="3">附件</el-radio-button>
-          <el-radio-button :label="4">必选项</el-radio-button>
-        </el-radio-group>
-      </el-form-item>
-    </el-form>
-    <h3 style="margin: 0;padding-left: 20px">约束结果</h3>
-    <el-form label-width="120px" style="padding: 20px;">
-      <el-form-item label="类型或部件">
-        <el-select v-show="constraintRequest.productId" value-key="categoryId" v-model="currentResult.firstCategory"
-                   placeholder="一级分类" clearable style="width: 200px"
-                   size="small"
-                   class="filter-item">
-          <el-option :value="category" :label="category.categoryName"
-                     v-for="category in firstCategoryList" :key="category.categoryId"></el-option>
-        </el-select>
-        <el-select v-show="!isEmptyObject(currentResult.firstCategory) && !currentResult.firstCategory.isLeaf"
-                   value-key="categoryId" v-model="currentResult.secondCategory"
-                   placeholder="二级分类" clearable style="width: 200px"
-                   size="small"
-                   class="filter-item">
-          <el-option :value="category" :label="category.categoryName"
-                     v-for="category in secondCategoryResultList" :key="category.categoryId"></el-option>
-        </el-select>
-        <el-select v-show="!isEmptyObject(currentResult.secondCategory) && !currentResult.secondCategory.isLeaf"
-                   value-key="categoryId" v-model="currentResult.thirdCategory"
-                   placeholder="三级分类" clearable style="width: 200px"
-                   size="small"
-                   class="filter-item">
-          <el-option :value="category" :label="category.categoryName"
-                     v-for="category in thirdCategoryResultList" :key="category.categoryId"></el-option>
-        </el-select>
-        <el-select v-show="!isEmptyObject(currentResult.thirdCategory) && !currentResult.thirdCategory.isLeaf"
-                   value-key="categoryId" v-model="currentResult.forthCategory" placeholder="四级分类" clearable
-                   style="width: 200px"
-                   size="small"
-                   class="filter-item">
-          <el-option :value="category" :label="category.categoryName"
-                     v-for="category in forthCategoryResultList" :key="category.categoryId"></el-option>
-        </el-select>
-        <el-select v-show="showResultComponent" v-model="currentResult.component" placeholder="部件" clearable
-                   style="width: 200px"
-                   value-key="componentId"
-                   size="small"
-                   class="filter-item">
-          <el-option :value="component" :label="component.componentModelNumber"
-                     v-for="component in componentResultList" :key="component.componentId"></el-option>
-        </el-select>
-        <el-button v-show="!isEmptyObject(currentResult.firstCategory)" class="filter-item" type="info" size="small"
-                   icon="el-icon-check" @click="addPremiseOrResult(currentResultList,currentSelectedResult)">选择
-        </el-button>
-      </el-form-item>
-      <el-form-item label="已选约束结果">
-        <el-tag
-          v-for="(categoryOrComponent,index) in currentResultList"
-          :key="index"
-          closable
-          :disable-transitions="false"
-          @close="deletePremiseOrResult(index,currentResultList)">
-          {{categoryOrComponent.categoryName || categoryOrComponent.componentModelNumber}}
-        </el-tag>
-      </el-form-item>
-      <el-form-item label="约束所在组号">
-        <el-input v-model="constraintRequest.groupId" placeholder="约束所在组号" style="width: 200px"
-                  type="number"></el-input>
-      </el-form-item>
-      <el-form-item label="约束所在组名">
-        <el-input v-model="constraintRequest.groupName" placeholder="约束所在组名" style="width: 300px"></el-input>
-      </el-form-item>
-      <el-form-item label="约束描述">
-        <el-input :rows="3" v-model="constraintRequest.constraintDesc" type="textarea" placeholder="约束描述"
-                  style="width: 400px"></el-input>
-      </el-form-item>
-      <el-form-item>
-        <el-button type="primary" @click="saveConstraint">保存</el-button>
-      </el-form-item>
-    </el-form>
+    <el-row style="padding-top: 10px">
+      <el-col :span="2">
+        <h3 style="margin: 0;padding-left: 20px">约束前提</h3>
+      </el-col>
+      <el-col :span="22" style="margin-top: -10px">
+        <el-form label-width="120px">
+          <el-form-item label="产品类型">
+            <el-select v-model="constraintRequest.productId" clearable placeholder="请选择产品类型" style="width: 300px">
+              <el-option v-for="(product,index) in productList" :key="index" :value="product.productId"
+                         :label="product.productName"></el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item label="类型或部件">
+            <el-select v-show="constraintRequest.productId" value-key="categoryId" v-model="currentPremise.firstCategory"
+                       placeholder="一级分类" clearable style="width: 200px" size="small" class="filter-item">
+              <el-option :value="category" :label="category.categoryName"
+                         v-for="category in firstCategoryList" :key="category.categoryId">
+              </el-option>
+            </el-select>
+            <el-select v-show="!isEmptyObject(currentPremise.firstCategory) && !currentPremise.firstCategory.isLeaf"
+                       value-key="categoryId" v-model="currentPremise.secondCategory"
+                       placeholder="二级分类" clearable style="width: 200px" size="small" class="filter-item">
+              <el-option :value="category" :label="category.categoryName"
+                         v-for="category in secondCategoryList" :key="category.categoryId"></el-option>
+            </el-select>
+            <el-select v-show="!isEmptyObject(currentPremise.secondCategory) && !currentPremise.secondCategory.isLeaf"
+                       value-key="categoryId" v-model="currentPremise.thirdCategory"
+                       placeholder="三级分类" clearable style="width: 200px" size="small" class="filter-item">
+              <el-option :value="category" :label="category.categoryName"
+                         v-for="category in thirdCategoryList" :key="category.categoryId"></el-option>
+            </el-select>
+            <el-select v-show="!isEmptyObject(currentPremise.thirdCategory) && !currentPremise.thirdCategory.isLeaf"
+                       value-key="categoryId" v-model="currentPremise.forthCategory"
+                       placeholder="四级分类" clearable style="width: 200px"
+                       size="small"
+                       class="filter-item">
+              <el-option :value="category" :label="category.categoryName"
+                         v-for="category in forthCategoryList" :key="category.categoryId"></el-option>
+            </el-select>
+            <el-select v-show="showPremiseComponent" v-model="currentPremise.component" placeholder="部件" clearable
+                       style="width: 200px"
+                       value-key="componentId"
+                       size="small"
+                       class="filter-item">
+              <el-option :value="component" :label="component.componentModelNumber"
+                         v-for="component in componentList" :key="component.componentId"></el-option>
+            </el-select>
+            <el-button v-show="!isEmptyObject(currentPremise.firstCategory)" class="filter-item" type="info" size="small"
+                       icon="el-icon-check" @click="addPremiseOrResult(currentPremiseList,currentSelectedPremise)">选择
+            </el-button>
+          </el-form-item>
+          <el-form-item label="已选约束前提">
+            <el-tag v-for="(categoryOrComponent,index) in currentPremiseList"
+                    :key="index"
+                    closable
+                    :disable-transitions="false"
+                    @close="deletePremiseOrResult(index,currentPremiseList)">
+              {{categoryOrComponent.categoryName || categoryOrComponent.componentModelNumber}}
+            </el-tag>
+          </el-form-item>
+        </el-form>
+      </el-col>
+    </el-row>
+    <el-row>
+      <el-col :span="2">
+        <h3 style="margin: 0;padding-left: 20px">约束类型</h3>
+      </el-col>
+      <el-col :span="22" style="margin-top: -10px">
+        <el-form>
+          <el-form-item>
+            <el-radio-group v-model="constraintRequest.constraintOperation" size="small">
+              <el-radio-button :label="1">仅可用于</el-radio-button>
+              <el-radio-button :label="2">互斥</el-radio-button>
+              <el-radio-button :label="3">附件</el-radio-button>
+              <el-radio-button :label="4">必选项</el-radio-button>
+            </el-radio-group>
+          </el-form-item>
+        </el-form>
+      </el-col>
+    </el-row>
+    <el-row>
+      <el-col :span="2">
+        <h3 style="margin: 0;padding-left: 20px">约束结果</h3>
+      </el-col>
+      <el-col :span="22" style="margin-top: -10px">
+        <el-form label-width="120px">
+          <el-form-item label="类型或部件">
+            <el-select v-show="constraintRequest.productId" value-key="categoryId" v-model="currentResult.firstCategory"
+                       placeholder="一级分类" clearable style="width: 200px"
+                       size="small"
+                       class="filter-item">
+              <el-option :value="category" :label="category.categoryName"
+                         v-for="category in firstCategoryList" :key="category.categoryId"></el-option>
+            </el-select>
+            <el-select v-show="!isEmptyObject(currentResult.firstCategory) && !currentResult.firstCategory.isLeaf"
+                       value-key="categoryId" v-model="currentResult.secondCategory"
+                       placeholder="二级分类" clearable style="width: 200px"
+                       size="small"
+                       class="filter-item">
+              <el-option :value="category" :label="category.categoryName"
+                         v-for="category in secondCategoryResultList" :key="category.categoryId"></el-option>
+            </el-select>
+            <el-select v-show="!isEmptyObject(currentResult.secondCategory) && !currentResult.secondCategory.isLeaf"
+                       value-key="categoryId" v-model="currentResult.thirdCategory"
+                       placeholder="三级分类" clearable style="width: 200px"
+                       size="small"
+                       class="filter-item">
+              <el-option :value="category" :label="category.categoryName"
+                         v-for="category in thirdCategoryResultList" :key="category.categoryId"></el-option>
+            </el-select>
+            <el-select v-show="!isEmptyObject(currentResult.thirdCategory) && !currentResult.thirdCategory.isLeaf"
+                       value-key="categoryId" v-model="currentResult.forthCategory" placeholder="四级分类" clearable
+                       style="width: 200px"
+                       size="small"
+                       class="filter-item">
+              <el-option :value="category" :label="category.categoryName"
+                         v-for="category in forthCategoryResultList" :key="category.categoryId"></el-option>
+            </el-select>
+            <el-select v-show="showResultComponent" v-model="currentResult.component" placeholder="部件" clearable
+                       style="width: 200px"
+                       value-key="componentId"
+                       size="small"
+                       class="filter-item">
+              <el-option :value="component" :label="component.componentModelNumber"
+                         v-for="component in componentResultList" :key="component.componentId"></el-option>
+            </el-select>
+            <el-button v-show="!isEmptyObject(currentResult.firstCategory)" class="filter-item" type="info" size="small"
+                       icon="el-icon-check" @click="addPremiseOrResult(currentResultList,currentSelectedResult)">选择
+            </el-button>
+          </el-form-item>
+          <el-form-item label="已选约束结果">
+            <el-tag
+              v-for="(categoryOrComponent,index) in currentResultList"
+              :key="index"
+              closable
+              :disable-transitions="false"
+              @close="deletePremiseOrResult(index,currentResultList)">
+              {{categoryOrComponent.categoryName || categoryOrComponent.componentModelNumber}}
+            </el-tag>
+          </el-form-item>
+        </el-form>
+
+      </el-col>
+    </el-row>
+    <el-row>
+      <el-col :span="2">
+        <h3 style="margin: 0;padding-left: 20px">约束信息</h3>
+      </el-col>
+      <el-col :span="22" style="margin-top: -10px">
+        <el-form label-width="120px">
+          <el-form-item label="约束所在组号">
+            <el-input v-model="constraintRequest.groupId" placeholder="约束所在组号" style="width: 200px"
+                      type="number"></el-input>
+          </el-form-item>
+          <el-form-item label="约束所在组名">
+            <el-input v-model="constraintRequest.groupName" placeholder="约束所在组名" style="width: 300px"></el-input>
+          </el-form-item>
+          <el-form-item label="约束描述">
+            <el-input :rows="3" v-model="constraintRequest.constraintDesc" type="textarea" placeholder="约束描述"
+                      style="width: 400px"></el-input>
+          </el-form-item>
+          <el-form-item>
+            <el-button type="primary" @click="saveConstraint">保存</el-button>
+          </el-form-item>
+        </el-form>
+      </el-col>
+    </el-row>
   </div>
 
 </template>
