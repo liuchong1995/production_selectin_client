@@ -295,6 +295,12 @@
             this.$message('请至少选择一种约束结果！')
             return
           }
+          if (this.constraintRequest.constraintOperation === 1) {
+            if ((this.constraintRequest.constraintPremise.categories.length + this.constraintRequest.constraintPremise.components.length) > 1) {
+              this.$message('仅可用于约束只能选一项前提！')
+              return
+            }
+          }
           if (this.constraintRequest.constraintOperation === 3) {
             if (this.constraintRequest.constraintPremise.categories.length !== 0 || this.constraintRequest.constraintPremise.components.length !== 1 || this.constraintRequest.constraintResult.categories.length !== 0 || this.constraintRequest.constraintResult.components.length !== 1) {
               this.$message('附件约束必须为组件和组件之间一对一约束！')
