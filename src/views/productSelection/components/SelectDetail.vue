@@ -305,12 +305,14 @@
           return
         }
         if (comp.firstCategoryId === this.currentProduct.shelfId) {
-          if (this.hasInstallation().size === 0) {
+          const setWithInstallation = this.hasInstallation();
+          if (setWithInstallation.size === 0) {
             this.$message('选择架子组件前请先选择安装方式！')
             return
           }
+          const instId = [...setWithInstallation][0]
           this.currentShelfSelectingId = comp.componentId
-          this.currentAllShelfHeight = this.allShelfHeight[this.currentShelfSelectingId]
+          this.currentAllShelfHeight = this.allShelfHeight[this.currentShelfSelectingId].filter(ele => ele.inst.includes(instId))
           this.currentAllMountHeight = this.allMountHeight
           this.orderEntity.shelfHeight = null
           this.orderEntity.mountHeight = null
@@ -535,7 +537,7 @@
               this.currentAllShelfHeight = this.getCurrentShelfHeight(this.currentShelfSelectingId).filter(ele => ele.height <= this.getCurrentMounted(newValue).height + currentConstraint[0].relationValue)
             }
           }
-          this.currentAllShelfHeight = this.currentAllShelfHeight.filter(ele => ele.minMountedHeight <= this.getCurrentMounted(newValue).height)
+          this.currentAllShelfHeight = this.currentAllShelfHeight.filter(ele => ele.minMountedHeight <= this.getCurrentMounted(newValue).height && ele.inst.includes([...this.hasInstallation()][0]))
         }
       }
     }
