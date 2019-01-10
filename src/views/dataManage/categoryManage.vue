@@ -212,6 +212,7 @@
           isMainCate: false,
           isInstallation: false,
           isShelf: false,
+          isVoltage: false,
           categoryOrder: null
         };
       }
