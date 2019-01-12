@@ -31,6 +31,14 @@ export function addShelfConstraint(data) {
   })
 }
 
+export function addAdvanceMandatory(data) {
+  return request({
+    url: `/constraint/advanceMandatory/`,
+    method: 'post',
+    data
+  })
+}
+
 export function insertConstraint(data) {
   return request({
     url: `/constraint/`,

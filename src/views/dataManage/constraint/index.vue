@@ -6,6 +6,11 @@
           <common-constraint></common-constraint>
         </keep-alive>
       </el-tab-pane>
+      <el-tab-pane label="复杂必选约束"  name="advanceMandatoryConstraint">
+        <keep-alive>
+          <advance-mandatory-constraint></advance-mandatory-constraint>
+        </keep-alive>
+      </el-tab-pane>
       <el-tab-pane label="架子约束" name="shelfConstraint">
         <keep-alive>
           <shelf-constraint></shelf-constraint>
@@ -17,12 +22,14 @@
 
 <script>
   import commonConstraint from './commonConstraint'
+  import advanceMandatoryConstraint from './advanceMandatoryConstraint'
   import shelfConstraint from './shelfConstraint'
 
   export default {
     name: 'constraint',
     components: {
       commonConstraint,
+      advanceMandatoryConstraint,
       shelfConstraint
     },
     data() {
