@@ -301,7 +301,7 @@
           if (premise.categoryId) {
             this.advanceMandatoryConstraintRequest.nonExistentCate.push(premise)
           } else {
-            this.advanceMandatoryConstraintRequest.nonExistentCate.push(premise)
+            this.advanceMandatoryConstraintRequest.nonExistentComp.push(premise)
           }
         }
         for (const res of this.currentResultList) {
@@ -315,9 +315,16 @@
         this.advanceMandatoryConstraintRequest.exitCate = this.uniqueArray(this.advanceMandatoryConstraintRequest.exitCate)
         this.advanceMandatoryConstraintRequest.exitComp = this.uniqueArray(this.advanceMandatoryConstraintRequest.exitComp)
         this.advanceMandatoryConstraintRequest.nonExistentCate = this.uniqueArray(this.advanceMandatoryConstraintRequest.nonExistentCate)
-        this.advanceMandatoryConstraintRequest.nonExistentCate = this.uniqueArray(this.advanceMandatoryConstraintRequest.nonExistentCate)
+        this.advanceMandatoryConstraintRequest.nonExistentComp = this.uniqueArray(this.advanceMandatoryConstraintRequest.nonExistentComp)
         this.advanceMandatoryConstraintRequest.resCate = this.uniqueArray(this.advanceMandatoryConstraintRequest.resCate)
         this.advanceMandatoryConstraintRequest.resComp = this.uniqueArray(this.advanceMandatoryConstraintRequest.resComp)
+        const lengthOfPremise = this.advanceMandatoryConstraintRequest.exitCate.length + this.advanceMandatoryConstraintRequest.exitComp.length
+        + this.advanceMandatoryConstraintRequest.nonExistentCate.length + this.advanceMandatoryConstraintRequest.nonExistentComp.length
+        const lengthOfRes = this.advanceMandatoryConstraintRequest.resCate.length + this.advanceMandatoryConstraintRequest.resComp.length
+        if (lengthOfPremise === 0 || lengthOfRes === 0){
+          this.$message('输入约束信息不足！')
+          return
+        }
         this.$confirm('您确定新增这个约束么, 是否继续?', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
