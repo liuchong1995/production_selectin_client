@@ -50,17 +50,17 @@
           <span>{{ scope.row.endUser }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="修改时间" width="200px" align="center">
+      <el-table-column label="修改时间" width="190px" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.updateTime | parseTime('{y}-{m}-{d} {h}:{i}:{s}') }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="制单人" align="center" width="150px">
+      <el-table-column label="制单人" align="center" width="140px">
         <template slot-scope="scope">
           <span>{{ scope.row.creator | parseUserName}}</span>
         </template>
       </el-table-column>
-      <el-table-column label="操作" align="center" width="240px" class-name="small-padding fixed-width" style="padding-left: 0;padding-right: 0">
+      <el-table-column label="操作" align="center" width="260px" class-name="small-padding fixed-width" style="padding-left: 0;padding-right: 0">
         <template slot-scope="scope" style="margin-left: 0;margin-right: 0">
           <el-button type="info" size="mini" @click="handleFork(scope.row.orderId)" style="margin-left: 0;margin-right: 0;padding-left: 12px;padding-right: 12px">克隆</el-button>
           <el-button type="primary" size="mini" @click="handleDetail(scope.row.orderId)" style="margin-left: 0;margin-right: 0;padding-left: 12px;padding-right: 12px">详情</el-button>
