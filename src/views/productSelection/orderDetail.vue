@@ -1,7 +1,7 @@
 <template>
   <el-row id="printJS-form" style="padding: 20px" class="customInlineFrom">
-    <el-col :span="21" style="font-size: 20px">KYOKUTOH产品选型: {{orderDetail.order.productModel}}</el-col>
-    <el-col :span="3">
+    <el-col :span="20" style="font-size: 20px">KYOKUTOH产品选型: {{orderDetail.order.productModel}}</el-col>
+    <el-col :span="4">
       <el-button size="small" type="primary" @click="print">打印</el-button>
       <el-button size="small" type="info" @click="fork">克隆</el-button>
       <el-button size="small" type="warning" @click="$router.push('/selection/history')">返回</el-button>

@@ -25,7 +25,7 @@
       fit
       highlight-current-row
       style="width: 100%;">
-      <el-table-column label="编号" prop="id" align="center" width="280px">
+      <el-table-column label="编号" prop="id" align="center" width="200px">
         <template slot-scope="scope">
           <span>{{ scope.row.orderNumber }}</span>
         </template>
@@ -35,7 +35,7 @@
           <span>{{ scope.row.productModel }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="关联单号" align="center" width="150px">
+      <el-table-column label="关联单号" align="center" width="140px">
         <template slot-scope="scope">
           <span>{{ scope.row.relateSellId }}</span>
         </template>
@@ -45,7 +45,7 @@
           <span>{{ scope.row.customer }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="最终用户及项目号" align="center" width="160px">
+      <el-table-column label="最终用户及项目号" align="center" width="199px">
         <template slot-scope="scope">
           <span>{{ scope.row.endUser }}</span>
         </template>
