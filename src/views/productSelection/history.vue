@@ -60,10 +60,10 @@
           <span>{{ scope.row.creator | parseUserName}}</span>
         </template>
       </el-table-column>
-      <el-table-column label="操作" align="center" width="400px" class-name="small-padding fixed-width" style="padding-left: 0;padding-right: 0">
+      <el-table-column label="操作" align="center" width="420px" class-name="small-padding fixed-width" style="padding-left: 0;padding-right: 0">
         <template slot-scope="scope" style="margin-left: 0;margin-right: 0">
           <el-button type="primary" round size="mini" :loading="scope.row.status === 1" @click="previewModel(scope.row)" style="margin-left: 0;margin-right: 0;padding-left: 12px;padding-right: 12px">{{scope.row.status | parseOrderStatus}}</el-button>
-          <el-button v-show="scope.row.status === 2" type="info" round size="mini" @click="previewModel(scope.row)" style="margin-left: 0;margin-right: 0;padding-left: 12px;padding-right: 12px">重新生成预览</el-button>
+          <el-button v-show="scope.row.status === 2" type="info" round size="mini" @click="regeneratePreviewModel(scope.row)" style="margin-left: 0;margin-right: 0;padding-left: 12px;padding-right: 12px">重新生成预览</el-button>
           <el-button type="info" size="mini" @click="handleFork(scope.row.orderId)" style="margin-left: 0;margin-right: 0;padding-left: 12px;padding-right: 12px">克隆</el-button>
           <el-button type="primary" size="mini" @click="handleDetail(scope.row.orderId)" style="margin-left: 0;margin-right: 0;padding-left: 12px;padding-right: 12px">详情</el-button>
           <el-button v-if="canModifyOrDelete(scope.row.creator)" size="mini" type="success" style="margin-left: 0;margin-right: 0;padding-left: 12px;padding-right: 12px"
@@ -160,7 +160,10 @@
           this.getList()
         } else if (order.status === 2) {
           window.open(`/order/downloadPreview/${order.orderId}`, '_blank');
-        } else if (order.status === 3){
+        }
+      },
+      async regeneratePreviewModel(order){
+        if (order.status === 2){
           await commitPreview(order.orderId)
           //更新状态为已提交
           order.status = 1
