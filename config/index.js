@@ -11,7 +11,10 @@ module.exports = {
     assetsPublicPath: '/',
     proxyTable: {
       '/PS': {
-        target: 'http://localhost:8888' // 开发环境配置图片服务器 本地为http://localhost:8888 公司为http://192.168.1.99:8888
+        target: 'http://192.168.1.99:9999' // 开发环境配置图片服务器 本地为http://localhost:8888 公司为http://192.168.1.99:9999
+      },
+      '/order/downloadPreview': {
+        target: 'http://localhost:8888' // 下载文件路径
       }
     },
 

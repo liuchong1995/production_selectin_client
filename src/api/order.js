@@ -60,3 +60,17 @@ export function getOrder(orderId) {
     method: 'get',
   })
 }
+
+export function commitPreview(orderId) {
+  return request({
+    url: `/order/commitPreview/${orderId}`,
+    method: 'post',
+  })
+}
+
+export function waitForFinish(orderId) {
+  return request({
+    url: `/order/waitForFinish/${orderId}`,
+    method: 'get',
+  })
+}

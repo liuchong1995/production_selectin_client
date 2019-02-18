@@ -14,6 +14,18 @@ export function parseUserName(userName) {
   return store.getters.allUserNameMap[userName]
 }
 
+export function parseOrderStatus(statusCode) {
+  let status = ''
+  if (statusCode === 0){
+    status = '预览'
+  } else if (statusCode === 1) {
+    status = '生成预览中...'
+  } else if (statusCode === 2) {
+    status = '下载预览'
+  }
+  return status
+}
+
 export function timeAgo(time) {
   const between = Date.now() / 1000 - Number(time)
   if (between < 3600) {
