@@ -152,8 +152,7 @@
       async previewModel(order){
         if (order.status === 0){
           await commitPreview(order.orderId)
-          //更新状态为已提交
-          order.status = 1
+          this.getList()
           //等待生成完成
           await waitForFinish(order.orderId)
           //更新状态为已完成
@@ -165,8 +164,7 @@
       async regeneratePreviewModel(order){
         if (order.status === 2){
           await commitPreview(order.orderId)
-          //更新状态为已提交
-          order.status = 1
+          this.getList()
           //等待生成完成
           await waitForFinish(order.orderId)
           //更新状态为已完成
