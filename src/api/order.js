@@ -47,6 +47,14 @@ export function deleteOrder(orderId) {
   })
 }
 
+export function deleteList(data) {
+  return request({
+    url: `/order/deleteList`,
+    method: 'post',
+    data
+  })
+}
+
 export function getOrderDetail(orderId) {
   return request({
     url: `/order/orderDetail/${orderId}`,
@@ -67,13 +75,13 @@ export function commitPreview(orderId) {
     method: 'post',
   })
 }
-
+/*
 export function waitForFinish(orderId) {
   return request({
     url: `/order/waitForFinish/${orderId}`,
     method: 'get',
   })
-}
+}*/
 
 const previewMsgUrl = process.env.NODE_ENV === 'production' ? '/cad-res' : 'http://localhost:8888/cad-res'
 

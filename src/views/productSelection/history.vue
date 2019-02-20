@@ -17,6 +17,7 @@
                    v-for="(user,index) in userList" :key="index"></el-option>
       </el-select>
       <el-button class="filter-item" type="primary" size="small" icon="el-icon-search" @click="getList">查询</el-button>
+      <el-button class="filter-item" type="danger" size="small" icon="el-icon-delete" @click="deleteList">批量删除</el-button>
     </div>
 
     <el-table
@@ -24,8 +25,13 @@
       border
       fit
       highlight-current-row
-      style="width: 100%;">
-      <el-table-column label="编号" prop="id" align="center" width="200px">
+      style="width: 100%;"
+      @selection-change="handleSelectionChange">
+      <el-table-column
+        type="selection"
+        width="55">
+      </el-table-column>
+      <el-table-column fixed label="编号" prop="id" align="center" width="200px">
         <template slot-scope="scope">
           <span>{{ scope.row.orderNumber }}</span>
         </template>
@@ -60,7 +66,7 @@
           <span>{{ scope.row.creator | parseUserName}}</span>
         </template>
       </el-table-column>
-      <el-table-column label="操作" align="center" width="420px" class-name="small-padding fixed-width" style="padding-left: 0;padding-right: 0">
+      <el-table-column label="操作" fixed="right" align="center" width="420px" class-name="small-padding fixed-width" style="padding-left: 0;padding-right: 0">
         <template slot-scope="scope" style="margin-left: 0;margin-right: 0">
           <el-button type="primary" round size="mini" :loading="scope.row.status === 3"  @click="previewModel(scope.row)" style="margin-left: 0;margin-right: 0;padding-left: 12px;padding-right: 12px">{{scope.row.status | parseOrderStatus}}</el-button>
           <el-button v-show="scope.row.status === 2 || scope.row.status === 4" type="info" round size="mini" @click="regeneratePreviewModel(scope.row)" style="margin-left: 0;margin-right: 0;padding-left: 12px;padding-right: 12px">重新生成预览</el-button>
@@ -83,7 +89,7 @@
 </template>
 
 <script>
-  import { getList, deleteOrder, commitPreview, waitForFinish, previewMsgUrl } from '@/api/order'
+  import { getList, deleteOrder, commitPreview, previewMsgUrl, deleteList } from '@/api/order'
   import { fetchList } from '@/api/product'
   import { getAllUsers } from '@/api/user'
   import Pagination from '@/components/Pagination'
@@ -112,12 +118,16 @@
           creator: undefined
         },
         productList: [],
-        userList: []
+        userList: [],
+        multipleSelection: []
       }
     },
     computed: {
       currentUserName() {
         return this.$store.getters.name
+      },
+      selectedOrderIds(){
+        return this.multipleSelection.map(ele => ele.orderId)
       }
     },
     created() {
@@ -129,6 +139,26 @@
       this.disconnect()
     },
     methods: {
+      async deleteList(){
+        if (this.selectedOrderIds.length === 0) {
+          return
+        }
+        this.$confirm(`您确定删除这${this.selectedOrderIds.length}个选型么, 是否继续?`, '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(async() => {
+          await deleteList(this.selectedOrderIds)
+          this.getList()
+          this.$message({
+            type: 'success',
+            message: '删除成功!'
+          })
+        })
+      },
+      handleSelectionChange(val) {
+        this.multipleSelection = val
+      },
       initWebSocket() {
         this.connection();
       },
