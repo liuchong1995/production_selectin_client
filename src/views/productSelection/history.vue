@@ -62,8 +62,8 @@
       </el-table-column>
       <el-table-column label="操作" align="center" width="420px" class-name="small-padding fixed-width" style="padding-left: 0;padding-right: 0">
         <template slot-scope="scope" style="margin-left: 0;margin-right: 0">
-          <el-button type="primary" round size="mini" :loading="scope.row.status === 1" @click="previewModel(scope.row)" style="margin-left: 0;margin-right: 0;padding-left: 12px;padding-right: 12px">{{scope.row.status | parseOrderStatus}}</el-button>
-          <el-button v-show="scope.row.status === 2" type="info" round size="mini" @click="regeneratePreviewModel(scope.row)" style="margin-left: 0;margin-right: 0;padding-left: 12px;padding-right: 12px">重新生成预览</el-button>
+          <el-button type="primary" round size="mini" :loading="scope.row.status === 3"  @click="previewModel(scope.row)" style="margin-left: 0;margin-right: 0;padding-left: 12px;padding-right: 12px">{{scope.row.status | parseOrderStatus}}</el-button>
+          <el-button v-show="scope.row.status === 2 || scope.row.status === 4" type="info" round size="mini" @click="regeneratePreviewModel(scope.row)" style="margin-left: 0;margin-right: 0;padding-left: 12px;padding-right: 12px">重新生成预览</el-button>
           <el-button type="info" size="mini" @click="handleFork(scope.row.orderId)" style="margin-left: 0;margin-right: 0;padding-left: 12px;padding-right: 12px">克隆</el-button>
           <el-button type="primary" size="mini" @click="handleDetail(scope.row.orderId)" style="margin-left: 0;margin-right: 0;padding-left: 12px;padding-right: 12px">详情</el-button>
           <el-button v-if="canModifyOrDelete(scope.row.creator)" size="mini" type="success" style="margin-left: 0;margin-right: 0;padding-left: 12px;padding-right: 12px"
@@ -83,7 +83,7 @@
 </template>
 
 <script>
-  import { getList, deleteOrder, commitPreview, waitForFinish, downloadPreview } from '@/api/order'
+  import { getList, deleteOrder, commitPreview, waitForFinish, previewMsgUrl } from '@/api/order'
   import { fetchList } from '@/api/product'
   import { getAllUsers } from '@/api/user'
   import Pagination from '@/components/Pagination'
@@ -133,13 +133,30 @@
         this.connection();
       },
       connection() {
-        let socket = new SockJS('http://localhost:8888/cad-res')
+        let socket = new SockJS(previewMsgUrl)
         this.stompClient = Stomp.over(socket)
         this.stompClient.connect({'Access-Control-Allow-Origin': true},() => {
           console.log('websocket连接成功')
           this.stompClient.subscribe('/topic/cadres', (msg) => {
             console.log(msg) // msg.body存放的是服务端发送给我们的信息
-            console.log(JSON.parse(msg.body))
+            let cadRes = JSON.parse(msg.body)
+            if (cadRes.code === 3){
+              this.$notify.info({
+                title: '消息',
+                message: '正在生成预览...'
+              })
+            } else if (cadRes.code === 2){
+              this.$notify.success({
+                title: '消息',
+                message: '生成预览成功'
+              })
+            } else if (cadRes.code === 4){
+              this.$notify.error({
+                title: '消息',
+                message: msg.message,
+                duration: 0
+              })
+            }
             this.getList()
           })
         });
@@ -180,22 +197,35 @@
         if (order.status === 0){
           await commitPreview(order.orderId)
           this.getList()
-          //等待生成完成
-          await waitForFinish(order.orderId)
-          //更新状态为已完成
-          this.getList()
+          this.$notify.info({
+            title: '消息',
+            message: '已提交生成预览'
+          })
         } else if (order.status === 2) {
           window.open(`/order/downloadPreview/${order.orderId}`, '_blank');
+        } else if (order.status === 1) {
+          this.$confirm('您确定再次提交生成预览么, 是否继续?', '提示', {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            type: 'warning'
+          }).then(async() => {
+            await commitPreview(order.orderId)
+            this.getList()
+            this.$notify.info({
+              title: '消息',
+              message: '已提交生成预览'
+            })
+          })
         }
       },
       async regeneratePreviewModel(order){
-        if (order.status === 2){
+        if (order.status === 2 || order.status === 4){
           await commitPreview(order.orderId)
           this.getList()
-          //等待生成完成
-          await waitForFinish(order.orderId)
-          //更新状态为已完成
-          this.getList()
+          this.$notify.info({
+            title: '消息',
+            message: '已提交生成预览'
+          })
         }
       },
       handleModify(orderId) {

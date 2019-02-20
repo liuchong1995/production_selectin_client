@@ -19,9 +19,13 @@ export function parseOrderStatus(statusCode) {
   if (statusCode === 0){
     status = '预览'
   } else if (statusCode === 1) {
-    status = '生成预览中...'
+    status = '已提交生成预览'
   } else if (statusCode === 2) {
     status = '下载预览'
+  } else if (statusCode === 3) {
+    status = '正在生成预览...'
+  } else if (statusCode === 4) {
+    status = '生成失败'
   }
   return status
 }
