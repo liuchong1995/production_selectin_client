@@ -87,12 +87,15 @@
   import { fetchList } from '@/api/product'
   import { getAllUsers } from '@/api/user'
   import Pagination from '@/components/Pagination'
+  import SockJS from  'sockjs-client'
+  import Stomp from 'stompjs'
 
   export default {
     name: 'history',
     components: { Pagination },
     data() {
       return {
+        stompClient:'',
         orderListData: {
           total: 1
         },
@@ -120,8 +123,32 @@
     created() {
       this.getList()
       this.loadDate()
+      this.initWebSocket()
+    },
+    beforeDestroy () {
+      this.disconnect()
     },
     methods: {
+      initWebSocket() {
+        this.connection();
+      },
+      connection() {
+        let socket = new SockJS('http://localhost:8888/cad-res')
+        this.stompClient = Stomp.over(socket)
+        this.stompClient.connect({'Access-Control-Allow-Origin': true},() => {
+          console.log('websocket连接成功')
+          this.stompClient.subscribe('/topic/cadres', (msg) => {
+            console.log(msg) // msg.body存放的是服务端发送给我们的信息
+            console.log(JSON.parse(msg.body))
+            this.getList()
+          })
+        });
+      },
+      disconnect() {
+        if (this.stompClient) {
+          this.stompClient.disconnect();
+        }
+      },
       canModifyOrDelete(owner) {
         return this.currentUserName === owner || this.currentUserName === 'admin'
       },
