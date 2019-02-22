@@ -190,7 +190,7 @@
               this.$notify.error({
                 title: cadRes.order.orderNumber,
                 dangerouslyUseHTMLString: true,
-                message: `生成预览失败！<br/>${cadRes.order.productModel}<br/>${msg.message}`,
+                message: `生成预览失败！<br/>${cadRes.order.productModel}<br/>${cadRes.message}`,
                 duration: 0
               })
             }
