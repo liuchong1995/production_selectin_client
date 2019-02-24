@@ -17,7 +17,7 @@
                    v-for="(user,index) in userList" :key="index"></el-option>
       </el-select>
       <el-button class="filter-item" type="primary" size="small" icon="el-icon-search" @click="getList">查询</el-button>
-      <el-button class="filter-item" type="danger" size="small" icon="el-icon-delete" @click="deleteList">批量删除</el-button>
+      <el-button v-permission="['admin']" class="filter-item" type="danger" size="small" icon="el-icon-delete" @click="deleteList">批量删除</el-button>
     </div>
 
     <el-table
@@ -89,6 +89,7 @@
 </template>
 
 <script>
+  import permission from '@/directive/permission' // 权限判断指令
   import { getList, deleteOrder, commitPreview, previewMsgUrl, deleteList } from '@/api/order'
   import { fetchList } from '@/api/product'
   import { getAllUsers } from '@/api/user'
@@ -97,6 +98,7 @@
   import Stomp from 'stompjs'
 
   export default {
+    directives: { permission },
     name: 'history',
     components: { Pagination },
     data() {
@@ -172,18 +174,23 @@
             let cadRes = JSON.parse(msg.body)
             if (cadRes.code === 3){
               this.$notify.info({
-                title: '消息',
-                message: '正在生成预览...'
+                title: cadRes.order.orderNumber,
+                dangerouslyUseHTMLString: true,
+                message: `正在生成预览... <br/>${cadRes.order.productModel}`,
+                duration: 0,
               })
             } else if (cadRes.code === 2){
               this.$notify.success({
-                title: '消息',
-                message: '生成预览成功'
+                title: cadRes.order.orderNumber,
+                dangerouslyUseHTMLString: true,
+                message: `生成预览成功: <br/>${cadRes.order.productModel}`,
+                duration: 0
               })
             } else if (cadRes.code === 4){
               this.$notify.error({
-                title: '消息',
-                message: msg.message,
+                title: cadRes.order.orderNumber,
+                dangerouslyUseHTMLString: true,
+                message: `生成预览失败！<br/>${cadRes.order.productModel}<br/>${cadRes.message}`,
                 duration: 0
               })
             }
@@ -228,8 +235,9 @@
           await commitPreview(order.orderId)
           this.getList()
           this.$notify.info({
-            title: '消息',
-            message: '已提交生成预览'
+            title: order.orderNumber,
+            dangerouslyUseHTMLString: true,
+            message: `<span>已提交生成预览:</span><br/><span>${order.productModel}</span>`
           })
         } else if (order.status === 2) {
           window.open(`/order/downloadPreview/${order.orderId}`, '_blank');
@@ -242,8 +250,9 @@
             await commitPreview(order.orderId)
             this.getList()
             this.$notify.info({
-              title: '消息',
-              message: '已提交生成预览'
+              title: order.orderNumber,
+              dangerouslyUseHTMLString: true,
+              message: `<span>已提交生成预览:</span><br/><span>${order.productModel}</span>`
             })
           })
         }
@@ -253,8 +262,10 @@
           await commitPreview(order.orderId)
           this.getList()
           this.$notify.info({
-            title: '消息',
-            message: '已提交生成预览'
+            title: order.orderNumber,
+            dangerouslyUseHTMLString: true,
+            message: `<span>已提交生成预览:</span><br/><span>${order.productModel}</span>`,
+            duration: 0
           })
         }
       },
