@@ -1,5 +1,5 @@
 <template>
-    <div class="mixin-components-container">
+    <div class="mixin-components-container mixin-components-container-list">
         <el-row :gutter="20" style="margin-top:0px;">
             <el-col :span="4" v-for="product in productList" :key="product.productId">
                 <el-card class="box-card">
@@ -44,8 +44,8 @@
   }
 </script>
 
-<style scoped>
-    .mixin-components-container {
+<style>
+    .mixin-components-container-list {
         background-color: #f0f2f5;
         padding: 30px;
         min-height: calc(100vh - 84px);
@@ -53,5 +53,9 @@
 
     .component-item {
         min-height: 100px;
+    }
+    .mixin-components-container-list .el-card:hover {
+      transform: translateY(-5%);
+      -webkit-box-shadow: 5px 4px 10px 2px #CCC;
     }
 </style>
