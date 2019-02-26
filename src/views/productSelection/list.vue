@@ -1,5 +1,5 @@
 <template>
-    <div class="mixin-components-container mixin-components-container-list">
+    <div class="mixin-components-container-list">
         <el-row :gutter="20" style="margin-top:0px;">
             <el-col :span="4" v-for="product in productList" :key="product.productId">
                 <el-card class="box-card">
