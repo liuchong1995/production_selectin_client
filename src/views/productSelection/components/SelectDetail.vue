@@ -564,6 +564,13 @@
     padding: 5px;
   }
 
+  .custom-card .el-card:hover {
+    transform: translateY(-5%);
+    -webkit-box-shadow: 5px 4px 10px 2px #CCC;
+  }
+  #selectedList .custom-card .el-card__header {
+    padding: 5px;
+  }
   .custom-card .el-card__body {
     padding: 8px;
   }
