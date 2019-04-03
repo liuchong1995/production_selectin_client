@@ -313,6 +313,10 @@
           const instId = [...setWithInstallation][0]
           this.currentShelfSelectingId = comp.componentId
           this.currentAllShelfHeight = this.allShelfHeight[this.currentShelfSelectingId].filter(ele => ele.inst.includes(instId))
+          if (this.currentAllShelfHeight.length === 0) {
+            this.$message('当前安装方式下没有匹配的架子高度！')
+            return
+          }
           this.currentAllMountHeight = this.allMountHeight
           this.orderEntity.shelfHeight = null
           this.orderEntity.mountHeight = null
@@ -480,8 +484,8 @@
       },
       'orderEntity.shelfHeight': function(newValue) {
         if (newValue && this.enableWatchShelfHeight) {
-          let ShelfConstraintInstallId = this.getShelfConstraintInstallId()
-          if (ShelfConstraintInstallId.length > 0) {
+          //let ShelfConstraintInstallId = this.getShelfConstraintInstallId()
+          /*if (ShelfConstraintInstallId.length > 0) {
             let currentConstraint = this.allShelfConstraint.filter(ele => ele.installation === ShelfConstraintInstallId[0])
             if (currentConstraint[0].relation === 2) {
               this.enableWatchMountedHeight = false
@@ -508,16 +512,20 @@
             } else {
               this.currentAllMountHeight = this.allMountHeight.filter(ele => ele.height >= newValue - currentConstraint[0].relationValue)
             }
-          }
+          }*/
           let currentMinMountedHeight = this.currentAllShelfHeight.find(ele => ele.height === newValue)
+          this.currentAllMountHeight = this.allMountHeight
           this.currentAllMountHeight = this.currentAllMountHeight.filter(ele => ele.height >= currentMinMountedHeight.minMountedHeight)
+          if (currentMinMountedHeight.maxMountedHeight) {
+            this.currentAllMountHeight = this.currentAllMountHeight.filter(ele => ele.height <= currentMinMountedHeight.maxMountedHeight)
+          }
         }
       },
 
       'orderEntity.mountHeight': function(newValue) {
         if (newValue && this.enableWatchMountedHeight) {
-          let ShelfConstraintInstallId = this.getShelfConstraintInstallId()
-          if (ShelfConstraintInstallId.length > 0) {
+          //let ShelfConstraintInstallId = this.getShelfConstraintInstallId()
+          /*if (ShelfConstraintInstallId.length > 0) {
             let currentConstraint = this.allShelfConstraint.filter(ele => ele.installation === ShelfConstraintInstallId[0])
             if (currentConstraint[0].relation === 2) {
               this.enableWatchShelfHeight = false
@@ -536,8 +544,18 @@
             } else {
               this.currentAllShelfHeight = this.getCurrentShelfHeight(this.currentShelfSelectingId).filter(ele => ele.height <= this.getCurrentMounted(newValue).height + currentConstraint[0].relationValue)
             }
-          }
+          }*/
+          const setWithInstallation = this.hasInstallation();
+          const instId = [...setWithInstallation][0]
+          this.currentAllShelfHeight = this.allShelfHeight[this.currentShelfSelectingId].filter(ele => ele.inst.includes(instId))
           this.currentAllShelfHeight = this.currentAllShelfHeight.filter(ele => ele.minMountedHeight <= this.getCurrentMounted(newValue).height && ele.inst.includes([...this.hasInstallation()][0]))
+          //debugger
+          this.currentAllShelfHeight = this.currentAllShelfHeight.filter(ele => {
+            if (ele.maxMountedHeight) {
+              return ele.maxMountedHeight >= this.getCurrentMounted(newValue).height
+            }
+            return true
+          })
         }
       }
     }
