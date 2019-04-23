@@ -36,7 +36,7 @@
           <span>{{ scope.row.orderNumber }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="产品型号" align="center" width="480px">
+      <el-table-column label="产品型号" align="center" width="550px">
         <template slot-scope="scope">
           <span>{{ scope.row.productModel }}</span>
         </template>
