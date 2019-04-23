@@ -223,6 +223,11 @@
         this.loadTreeData(this.productId)
       } else {
         await this.loadEditDate()
+        if (!this.isFork) {
+          this.orderEntity.modifier = this.currentUserName
+        } else {
+          this.orderEntity.creator = this.currentUserName
+        }
       }
     },
     methods: {
