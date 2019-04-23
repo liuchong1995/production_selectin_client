@@ -313,14 +313,18 @@
           if (this.currentProduct.hasInstallation) {
             const instId = [...setWithInstallation][0]
             this.currentShelfSelectingId = comp.componentId
-            this.currentAllShelfHeight = this.allShelfHeight[this.currentShelfSelectingId].filter(ele => ele.inst.includes(instId))
-            if (this.currentAllShelfHeight.length === 0) {
-              this.$message('当前安装方式下没有匹配的架子高度！')
-              return
+            if (this.currentProduct.hasShelfheight) {
+              this.currentAllShelfHeight = this.allShelfHeight[this.currentShelfSelectingId].filter(ele => ele.inst.includes(instId))
+              if (this.currentAllShelfHeight.length === 0) {
+                this.$message('当前安装方式下没有匹配的架子高度！')
+                return
+              }
             }
           } else {
             this.currentShelfSelectingId = comp.componentId
-            this.currentAllShelfHeight = this.allShelfHeight[this.currentShelfSelectingId]
+            if (this.currentProduct.hasShelfheight) {
+              this.currentAllShelfHeight = this.allShelfHeight[this.currentShelfSelectingId]
+            }
           }
           this.currentAllMountHeight = this.allMountHeight
           this.orderEntity.shelfHeight = null
@@ -468,6 +472,8 @@
               }
             } else {
               if (!this.isEdit && !this.isFork) {
+                await saveOrder(this.orderEntity)
+              } else if (this.isFork) {
                 await saveOrder(this.orderEntity)
               } else {
                 await updateOrder(this.orderEntity)
