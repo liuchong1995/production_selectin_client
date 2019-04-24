@@ -7,6 +7,8 @@
         <el-option :value="product.productId" :label="product.productName"
                    v-for="(product,index) in productList" :key="index"></el-option>
       </el-select>
+      <el-input v-model="orderSearchRequest.productModel" placeholder="产品型号" style="width: 500px;" class="filter-item"
+                size="small"/>
       <el-input v-model="orderSearchRequest.costumer" placeholder="客户名称" style="width: 250px;" class="filter-item"
                 size="small"/>
       <el-input v-model="orderSearchRequest.endUser" placeholder="最终用户及项目号" style="width: 250px;" class="filter-item"
@@ -117,7 +119,8 @@
           productId: undefined,
           costumer: undefined,
           endUser: undefined,
-          creator: undefined
+          creator: undefined,
+          productModel: undefined
         },
         productList: [],
         userList: [],
