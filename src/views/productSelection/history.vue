@@ -243,7 +243,7 @@
             message: `<span>已提交生成预览:</span><br/><span>${order.productModel}</span>`
           })
         } else if (order.status === 2) {
-          window.open(`/order/downloadPreview/${order.orderId}`, '_blank');
+          window.open(process.env.BASE_API + `/order/downloadPreview/${order.orderId}`, '_blank');
         } else if (order.status === 1) {
           this.$confirm('您确定再次提交生成预览么, 是否继续?', '提示', {
             confirmButtonText: '确定',

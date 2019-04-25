@@ -83,6 +83,6 @@ export function waitForFinish(orderId) {
   })
 }*/
 
-const previewMsgUrl = process.env.NODE_ENV === 'production' ? '/cad-res' : 'http://localhost:8888/cad-res'
+const previewMsgUrl = process.env.BASE_API +  '/cad-res'
 
 export {previewMsgUrl}
