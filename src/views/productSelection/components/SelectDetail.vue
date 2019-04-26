@@ -196,7 +196,9 @@
         formLabelWidth: '200px',
         //为了适配后端
         enableWatchMountedHeight: true,
-        enableWatchShelfHeight: true
+        enableWatchShelfHeight: true,
+
+        tempRoute: {}
       }
     },
     computed: {
@@ -229,6 +231,8 @@
           this.orderEntity.creator = this.currentUserName
         }
       }
+      this.tempRoute = Object.assign({}, this.$route)
+      this.setTagsViewTitle()
     },
     methods: {
       async loadEditDate() {
@@ -303,6 +307,20 @@
       showDetailDialog(comp) {
         this.currentComponentDetail = comp
         this.centerDialogVisible = true
+      },
+      setTagsViewTitle() {
+        let newTitle = ''
+        if (!this.isEdit) {
+          newTitle = `选型 (${this.currentProduct.productName})`
+        } else {
+          if (!this.isFork) {
+            newTitle = `修改选型 (${this.orderEntity.orderNumber})`
+          } else {
+            newTitle = `克隆选型 (${this.orderEntity.orderNumber})`
+          }
+        }
+        const route = Object.assign({}, this.tempRoute, { title:newTitle })
+        this.$store.dispatch('updateVisitedView', route)
       },
       async choiceComponent(comp) {
         if (this.selectedTypeList.find(ele => ele === comp.firstCategoryId)) {
