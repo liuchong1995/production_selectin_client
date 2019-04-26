@@ -120,7 +120,7 @@
           const res = await isExit(this.componentAddRequest)
           if (!this.isEdit && res.length > 0) {
             callback(new Error('已存在相同的产品型号'))
-          } else if ((this.isEdit && res.length > 0 && value !== this.forCheckIsSameName.componentModelNumber)) {
+          } else if ((this.isEdit && res.length > 1) || (this.isEdit && res.length > 0 && res[0].componentId !== parseInt(this.componentId))) {
             callback(new Error('已存在相同的产品型号'))
           } else {
             callback()
@@ -134,7 +134,7 @@
           const res = await isExit(this.componentAddRequest)
           if (!this.isEdit && res.length > 0) {
             callback(new Error('已存在相同的产品短码'))
-          } else if (this.isEdit && res.length > 0 && value !== this.forCheckIsSameName.componentShortNumber) {
+          } else if ((this.isEdit && res.length > 1) || (this.isEdit && res.length > 0 && res[0].componentId !== parseInt(this.componentId))) {
             callback(new Error('已存在相同的产品短码'))
           } else {
             callback()
@@ -169,15 +169,18 @@
           componentShortNumber: [{ validator: validateComponentShortNumber, trigger: 'blur' }]
         },
         firstComeThisPage: true,
-        forCheckIsSameName: {}
+        forCheckIsSameName: {},
+        tempRoute: {}
       }
     },
-    mounted() {
+    async mounted() {
       this.setEditor()
       if (!this.isEdit) {
-        this.loadPageData()
+        await this.loadPageData()
       } else {
-        this.initEditPage()
+        await this.initEditPage()
+        this.tempRoute = Object.assign({}, this.$route)
+        this.setTagsViewTitle()
       }
     },
     computed: {
@@ -186,6 +189,11 @@
       }
     },
     methods: {
+      setTagsViewTitle() {
+        let newTitle = `修改部件 (${this.componentAddRequest.componentModelNumber})`
+        const route = Object.assign({}, this.tempRoute, { title:newTitle })
+        this.$store.dispatch('updateVisitedView', route)
+      },
       onSubmit() {
         this.$refs.compForm.validate(async valid => {
           if (valid) {

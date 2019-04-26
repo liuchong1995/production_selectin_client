@@ -100,7 +100,8 @@
           components: []
         },
         currentComponentDetail: {},
-        orderId: 0
+        orderId: 0,
+        tempRoute: {}
       }
     },
     async mounted() {
@@ -108,8 +109,15 @@
       let tempOrderDetail = await getOrderDetail(this.orderId)
       this.orderDetail.components = tempOrderDetail.components.sort((a, b) => a.componentId - b.componentId)
       this.orderDetail.order = tempOrderDetail.order
+      this.tempRoute = Object.assign({}, this.$route)
+      this.setTagsViewTitle()
     },
     methods: {
+      setTagsViewTitle() {
+        let newTitle = `选型详情 (${this.orderDetail.order.orderNumber})`
+        const route = Object.assign({}, this.tempRoute, { title:newTitle })
+        this.$store.dispatch('updateVisitedView', route)
+      },
       showDetailDialog(comp) {
         this.currentComponentDetail = comp
         this.centerDialogVisible = true
