@@ -50,6 +50,28 @@ export function saveUser(data) {
   })
 }
 
+export function checkOldPassword(data) {
+  return request({
+    url: `/user/checkOldPassword`,
+    method: 'post',
+    params: {
+      username: data.username,
+      password: data.password
+    }
+  })
+}
+
+export function modifyPassword(data) {
+  return request({
+    url: `/user/modifyPassword`,
+    method: 'post',
+    params: {
+      username: data.username,
+      password: data.password
+    }
+  })
+}
+
 
 export function deleteUser(userId) {
   return request({
