@@ -21,6 +21,21 @@
           <span>{{ handleSegmentation(scope.row.segmentation) }}</span>
         </template>
       </el-table-column>
+      <el-table-column label="是否有安装方式" prop="id" align="center" width="150px">
+        <template slot-scope="scope">
+          <span>{{ scope.row.hasInstallation?'是':'否' }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="是否有架子高度" prop="id" align="center" width="150px">
+        <template slot-scope="scope">
+          <span>{{ scope.row.hasShelfheight?'是':'否' }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="是否有安装高度" prop="id" align="center" width="150px">
+        <template slot-scope="scope">
+          <span>{{ scope.row.hasMountedheight?'是':'否' }}</span>
+        </template>
+      </el-table-column>
       <el-table-column label="操作" align="center" width="150px" class-name="small-padding fixed-width"
                        style="padding-left: 0;padding-right: 0">
         <template slot-scope="scope" style="margin-left: 0;margin-right: 0">
@@ -31,10 +46,11 @@
         </template>
       </el-table-column>
     </el-table>
-    <el-dialog title="新增产品" :visible.sync="dialogFormVisible" width="1000px">
+    <el-dialog title="新增产品" :visible.sync="dialogFormVisible" width="1000px" top="5vh">
       <el-form :model="productAddRequest">
         <el-form-item label="产品名称" :label-width="formLabelWidth">
-          <el-input v-model="productAddRequest.productName" auto-complete="off" placeholder="分类名称" style="width: 400px"></el-input>
+          <el-input v-model="productAddRequest.productName" auto-complete="off" placeholder="分类名称"
+                    style="width: 400px"></el-input>
         </el-form-item>
         <el-form-item label="选型项数" :label-width="formLabelWidth">
           <el-input-number v-model="choiceItems" :min="1" :max="100" label="选型项数"></el-input-number>
@@ -64,6 +80,36 @@
             <i v-else class="el-icon-plus avatar-uploader-icon"></i>
           </el-upload>
         </el-form-item>
+        <el-form-item label="是否有安装方式" :label-width="formLabelWidth">
+          <el-switch
+            style="display: block;margin-top: 8px"
+            v-model="hasInstallation"
+            active-color="#13ce66"
+            inactive-color="#ff4949"
+            active-text="是"
+            inactive-text="否">
+          </el-switch>
+        </el-form-item>
+        <el-form-item label="是否有架子高度" :label-width="formLabelWidth">
+          <el-switch
+            style="display: block;margin-top: 8px"
+            v-model="hasShelfheight"
+            active-color="#13ce66"
+            inactive-color="#ff4949"
+            active-text="是"
+            inactive-text="否">
+          </el-switch>
+        </el-form-item>
+        <el-form-item label="是否有安装高度" :label-width="formLabelWidth">
+          <el-switch
+            style="display: block;margin-top: 8px"
+            v-model="hasMountedheight"
+            active-color="#13ce66"
+            inactive-color="#ff4949"
+            active-text="是"
+            inactive-text="否">
+          </el-switch>
+        </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="dialogFormVisible = false">取 消</el-button>
@@ -90,7 +136,10 @@
         productAddRequest: {},
         subSectionRanges: [{ range: [1, 1] }],
         dialogFormVisible: false,
-        formLabelWidth: '120px'
+        formLabelWidth: '120px',
+        hasInstallation: true,
+        hasShelfheight: true,
+        hasMountedheight: true
       }
     },
     mounted() {
@@ -158,7 +207,7 @@
       },
       addProd() {
         const checkRes = this.checkSubSection()
-        if (!checkRes){
+        if (!checkRes) {
           this.$message({
             type: 'error',
             message: '产品信息输入错误或分段不符合规则!'
@@ -169,7 +218,9 @@
         for (const subSection of this.subSectionRanges) {
           tempSegmentation.push(subSection.range[1])
         }
-        this.productAddRequest.segmentation = JSON.stringify(tempSegmentation)
+        this.productAddRequest.segmentation = JSON.stringify(tempSegmentation);
+        [this.productAddRequest.hasInstallation, this.productAddRequest.hasShelfheight, this.productAddRequest.hasMountedheight]
+          = [this.hasInstallation, this.hasShelfheight, this.hasMountedheight]
         this.$confirm('您确定增加这个产品么, 是否继续?', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
@@ -194,7 +245,7 @@
             return false
           }
         }
-        return !(!this.imageUrl || !this.productAddRequest.productName || !this.productAddRequest.productName.trim());
+        return !(!this.imageUrl || !this.productAddRequest.productName || !this.productAddRequest.productName.trim())
 
       },
       async removeProd(prod) {
