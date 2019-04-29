@@ -33,9 +33,13 @@
           <span>{{ scope.row.enable ? '可用' : '禁用' }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="操作" align="center" width="150px" class-name="small-padding fixed-width"
+      <el-table-column label="操作" align="center" width="250px" class-name="small-padding fixed-width"
                        style="padding-left: 0;padding-right: 0">
         <template slot-scope="scope" style="margin-left: 0;margin-right: 0">
+          <el-button size="mini" type="danger"
+                     style="margin-left: 0;margin-right: 0;padding-left: 12px;padding-right: 12px"
+                     @click="modifyPasswordFormVisible = true; currentChangeUsername = scope.row.username">修改密码
+          </el-button>
           <el-button type="info" size="mini" @click="handleBan(scope.row.userId)"
                      style="margin-left: 0;margin-right: 0;padding-left: 12px;padding-right: 12px">{{ scope.row.enable ?
             '禁用' : '启用' }}
@@ -74,12 +78,33 @@
         <el-button type="primary" @click="addUser">保 存</el-button>
       </div>
     </el-dialog>
+    <el-dialog title="修改密码" :visible.sync="modifyPasswordFormVisible" width="30%">
+      <el-form :model="modifyPasswordForm">
+        <el-form-item label="请输入新密码" :label-width="formLabelWidth">
+          <el-input v-model="modifyPasswordForm.newPassword" auto-complete="off" :type="passwordType"></el-input>
+          <span class="show-pwd" @click="showPwd">
+          <svg-icon :icon-class="passwordType === 'password' ? 'eye' : 'eye-open'"/>
+          </span>
+        </el-form-item>
+        <el-form-item label="再次输入" :label-width="formLabelWidth">
+          <el-input v-model="modifyPasswordForm.newRepeatPassword" auto-complete="off" :type="passwordType"></el-input>
+          <span class="show-pwd" @click="showPwd">
+          <svg-icon :icon-class="passwordType === 'password' ? 'eye' : 'eye-open'"/>
+          </span>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="modifyPasswordFormVisible = false">取 消</el-button>
+        <el-button type="primary" @click="modifyPassword">确定
+        </el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
 <script>
   import Pagination from '@/components/Pagination'
-  import { searchUsers, getAllRoles, banOrDebanUser, deleteUser, saveUser } from '@/api/user'
+  import { searchUsers, getAllRoles, banOrDebanUser, deleteUser, saveUser, modifyPassword } from '@/api/user'
 
   export default {
     name: 'userManage',
@@ -95,14 +120,41 @@
           limit: 10
         },
         dialogFormVisible: false,
-        formLabelWidth: '100px',
-        userEntity: {}
+        formLabelWidth: '120px',
+        userEntity: {},
+        currentChangeUsername: '',
+        passwordType: 'password',
+        modifyPasswordFormVisible: false,
+        modifyPasswordForm: {
+          newPassword: '',
+          newRepeatPassword: ''
+        },
       }
     },
     mounted() {
       this.loadData()
     },
     methods: {
+      showPwd() {
+        if (this.passwordType === 'password') {
+          this.passwordType = ''
+        } else {
+          this.passwordType = 'password'
+        }
+      },
+      async modifyPassword() {
+        if (this.modifyPasswordForm.newPassword === '') {
+          this.$message.error('请输入新密码！')
+          return
+        }
+        if (this.modifyPasswordForm.newPassword !== this.modifyPasswordForm.newRepeatPassword) {
+          this.$message.error('两次密码输入不一致！')
+          return
+        }
+        await modifyPassword({ username: this.currentChangeUsername, password: this.modifyPasswordForm.newRepeatPassword })
+        this.$message.success('修改成功！')
+        this.modifyPasswordFormVisible = false
+      },
       async loadData() {
         this.allRoles = await getAllRoles()
         this.allUser = await searchUsers(this.listQuery)
@@ -147,3 +199,15 @@
     }
   }
 </script>
+
+<style rel="stylesheet/scss" lang="scss" scoped>
+  .show-pwd {
+    position: absolute;
+    right: 10px;
+    top: 7px;
+    font-size: 16px;
+    color: black;
+    cursor: pointer;
+    user-select: none;
+  }
+</style>

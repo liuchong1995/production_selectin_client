@@ -117,8 +117,12 @@
           return
         }
         await modifyPassword({ username: this.currentUserName, password: this.modifyPasswordForm.newRepeatPassword })
-        this.$message.success('修改成功！')
-        this.logout()
+        this.$alert('修改成功，请重新登录', '提示', {
+          confirmButtonText: '确定',
+          callback: action => {
+            this.logout()
+          }
+        });
       },
       showPwd() {
         if (this.passwordType === 'password') {
