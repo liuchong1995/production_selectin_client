@@ -27,3 +27,14 @@ export function getAllInstallation(prdId) {
     method: 'get'
   })
 }
+
+export function save(data) {
+  return request({
+    url: `/shelf/save`,
+    method: 'post',
+    data: {
+      heights: data.heights,
+      bracketId: data.bracketId
+    }
+  })
+}

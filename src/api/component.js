@@ -83,6 +83,20 @@ export function getComponentToShow(compId) {
   })
 }
 
+export function getAllShelf(productId) {
+  return request({
+    url: `/component/getAllShelf/${productId}`,
+    method: 'get'
+  })
+}
+
+export function getConstraint(shelfId) {
+  return request({
+    url: `/shelf/getConstraint/${shelfId}`,
+    method: 'get'
+  })
+}
+
 const uploadUrl = process.env.NODE_ENV === 'production' ? process.env.BASE_API + '/photo/wangEditorUpload' : 'http://localhost:8888/photo/wangEditorUpload'
 const compImgUploadUrl = process.env.NODE_ENV === 'production' ? process.env.BASE_API + '/component/uploadFile' : 'http://localhost:8888/component/uploadFile'
 
