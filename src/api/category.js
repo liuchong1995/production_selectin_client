@@ -63,3 +63,14 @@ export function delCategory(data) {
     data
   })
 }
+
+export function rename(data) {
+  return request({
+    url: `/category/rename`,
+    method: 'post',
+    params: {
+      categoryName: data.categoryName,
+      categoryId: data.categoryId
+    }
+  })
+}
