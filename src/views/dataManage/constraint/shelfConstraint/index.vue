@@ -2,38 +2,37 @@
   <el-row>
     <el-form :inline="true" label-width="80px" style="padding: 10px 0 0 0;">
       <el-form-item label="产品类型">
-        <el-select v-model="currentProduct.productId" placeholder="请选择产品类型" style="width: 300px">
-          <el-option v-for="(product,index) in productList" :key="index" :value="product.productId"
+        <el-select v-model="currentProduct" placeholder="请选择产品类型" style="width: 300px" value-key="productId">
+          <el-option v-for="(product,index) in productList" :key="index" :value="product"
                      :label="product.productName"></el-option>
         </el-select>
       </el-form-item>
       <el-form-item label="架子组件">
-        <el-select v-model="currentShelfId" placeholder="请选择架子组件">
+        <el-select v-model="currentShelfId" placeholder="请选择架子组件" style="width: 300px">
           <el-option :value="shelf.componentId" v-for="(shelf,index) in shelfList" :key="index"
                      :label="shelf.componentModelNumber"></el-option>
         </el-select>
       </el-form-item>
     </el-form>
 
-    <div class="click-table4-oper" v-show="currentShelfId">
+    <div class="click-table4-oper" v-show="currentShelfId && currentProduct.hasShelfheight">
       <el-button type="success" size="mini" @click="insertEvent">新增</el-button>
       <el-button type="danger" size="mini" @click="deleteSelectedEvent">删除选中</el-button>
       <el-button type="info" size="mini" @click="saveConstraint">保存</el-button>
     </div>
 
-    <elx-editable
+    <elx-editable v-show="currentProduct.hasShelfheight"
       ref="elxEditable"
       class="click-table4"
       border
       size="large"
-      :row-class-name="tableRowClassName"
       :data.sync="curShelfConstraintList"
       :edit-config="{trigger: 'click', mode: 'row', useDefaultValidTip: true}"
       style="width: 100%">
       <elx-editable-column type="selection" width="55" fixed="left"></elx-editable-column>
       <elx-editable-column prop="height" label="架子高度" min-width="160"
                            :edit-render="{name: 'ElInputNumber'}"></elx-editable-column>
-      <elx-editable-column prop="inst" label="安装方式" min-width="160"
+      <elx-editable-column v-if="currentProduct.hasInstallation" prop="inst" label="安装方式" min-width="160"
                            :edit-render="{name: 'ElSelect', options: installationList, optionProps: {label: 'componentModelNumber', value: 'componentId'}}"></elx-editable-column>
       <elx-editable-column prop="minMountedHeight" label="最小安装高度" min-width="160"
                            :edit-render="{name: 'ElInputNumber'}"></elx-editable-column>
@@ -66,11 +65,6 @@
     methods: {
       async initPage() {
         this.productList = await fetchList()
-      },
-      removeEvent (row) {
-        console.log(row)
-      },
-      tableRowClassName ({ row, rowIndex }) {
       },
       insertEvent () {
         this.curShelfConstraintList.unshift({})
