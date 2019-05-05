@@ -105,7 +105,12 @@ export default {
           if (latestView) {
             this.$router.push(latestView)
           } else {
-            this.$router.push('/')
+            if (view.name === 'Dashboard') {
+              // to reload home page
+              this.$router.replace({ path: '/redirect' + view.fullPath })
+            } else {
+              this.$router.push('/')
+            }
           }
         }
       })
